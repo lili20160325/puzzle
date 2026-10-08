@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#fff0d9">
+<title>解谜大冒险 · 密室逃脱 · 侦探推理 · 关卡益智</title>
+<style>
+:root{--ink:#4a3560;--ink2:#7d6b91;--pink:#ff6fa5;--pink2:#ffd6e6;--purple:#8e6bff;--purple2:#ebe4ff;--mint:#22b88a;--mint2:#d4f6ea;--sun:#ffc23c;--sun2:#fff1c7;--sky:#4d9bff;--sky2:#dcecff;--coral:#ff7b6b;--card:#fff;--r:20px;--shadow:0 6px 18px rgba(120,80,160,.13)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;overflow-x:hidden}
+body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC","Source Han Sans SC",sans-serif;color:var(--ink);background:linear-gradient(165deg,#fff0d9 0%,#ffe6f1 45%,#e6f0ff 100%) fixed;-webkit-user-select:none;user-select:none;overscroll-behavior:none}
+button{font-family:inherit;color:inherit;border:0;cursor:pointer;touch-action:manipulation;background:none}
+button:focus-visible{outline:3px solid var(--purple);outline-offset:2px}
+h1,h2,h3,p{margin:0}
+.screen{display:none;min-height:100vh;min-height:100dvh}
+.screen.active{display:block;animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.wrap{max-width:1040px;margin:0 auto;padding:12px 14px 28px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:14px}
+.btn{border-radius:16px;padding:12px 18px;font-size:17px;font-weight:800;background:#fff;box-shadow:0 4px 0 rgba(74,53,96,.13);transition:transform .08s;min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(74,53,96,.13)}
+.btn.primary{background:linear-gradient(180deg,#ff8dba,#ff5d98);color:#fff;box-shadow:0 5px 0 #d94a80}
+.btn.purple{background:linear-gradient(180deg,#a68bff,#7f5cff);color:#fff;box-shadow:0 5px 0 #6243d6}
+.btn.mint{background:linear-gradient(180deg,#46d6aa,#1fb185);color:#fff;box-shadow:0 5px 0 #188d69}
+.btn.sun{background:linear-gradient(180deg,#ffd76a,#ffb820);color:#6b4a00;box-shadow:0 5px 0 #d99500}
+.btn.ghost{background:rgba(255,255,255,.75)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.iconbtn{width:46px;height:46px;border-radius:15px;background:rgba(255,255,255,.88);display:inline-flex;align-items:center;justify-content:center;box-shadow:0 3px 0 rgba(74,53,96,.1);font-size:22px;flex:none}
+.iconbtn svg{width:24px;height:24px}
+.tag{display:inline-block;font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:var(--purple2);color:#6a4bd8;white-space:nowrap}
+.tag.pink{background:var(--pink2);color:#d63e7a}.tag.mint{background:var(--mint2);color:#138a66}.tag.sun{background:var(--sun2);color:#a8740a}
+.stars{display:inline-flex;gap:2px;vertical-align:middle}.stars svg{width:18px;height:18px}
+/* ---------- 顶栏 ---------- */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:8px;padding:10px 12px;background:rgba(255,246,236,.92);backdrop-filter:blur(6px);box-shadow:0 2px 10px rgba(120,80,160,.08)}
+.topbar .ttl{flex:1;min-width:0;font-size:18px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .ttl small{display:block;font-size:12px;font-weight:700;color:var(--ink2)}
+.hintbtn{height:46px;border-radius:15px;padding:0 12px;background:linear-gradient(180deg,#ffe58a,#ffc93c);box-shadow:0 3px 0 #dba21a;font-weight:900;font-size:16px;display:inline-flex;align-items:center;gap:4px;flex:none}
+/* ---------- 首页 ---------- */
+.home-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 2px 4px}
+.logo{font-size:30px;font-weight:900;letter-spacing:2px;background:linear-gradient(90deg,#ff5d98,#8e6bff 60%,#4d9bff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--ink2);font-size:14px;margin-top:2px}
+.starpill{display:inline-flex;align-items:center;gap:4px;background:#fff;border-radius:999px;padding:6px 12px;font-weight:900;box-shadow:var(--shadow)}
+.starpill svg{width:20px;height:20px}
+.mascot{display:flex;align-items:center;gap:10px;margin:12px 0}
+.mascot .face{font-size:46px;flex:none;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px)}}
+.bubble{background:#fff;border-radius:16px;padding:10px 14px;font-size:15px;box-shadow:var(--shadow);position:relative;line-height:1.5}
+.games{display:grid;grid-template-columns:1fr;gap:14px}
+.game{position:relative;display:flex;align-items:center;gap:14px;text-align:left;border-radius:24px;padding:16px;min-height:118px;color:#fff;box-shadow:0 8px 0 rgba(0,0,0,.12),var(--shadow);overflow:hidden;width:100%}
+.game:active{transform:translateY(3px)}
+.game .gi{font-size:52px;flex:none;width:76px;height:76px;border-radius:22px;background:rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center}
+.game h2{font-size:24px;font-weight:900;letter-spacing:1px}
+.game p{font-size:14px;opacity:.95;margin-top:4px;line-height:1.45}
+.game .prog{margin-top:8px;font-size:13px;font-weight:800;background:rgba(255,255,255,.25);display:inline-block;padding:3px 10px;border-radius:999px}
+.game.g1{background:linear-gradient(135deg,#ff9a6b,#ff5d98)}
+.game.g2{background:linear-gradient(135deg,#7f8cff,#8e5cff)}
+.game.g3{background:linear-gradient(135deg,#2fd1a0,#24a5d6)}
+.game:after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.12)}
+.home-foot{margin-top:16px;text-align:center;color:var(--ink2);font-size:13px;line-height:1.6}
+@media(min-width:900px){.games{grid-template-columns:repeat(3,1fr)}.game{flex-direction:column;text-align:center;min-height:260px;justify-content:center}.game .gi{width:96px;height:96px;font-size:62px}}
+/* ---------- 关卡列表 ---------- */
+.list-intro{margin:12px 2px;color:var(--ink2);font-size:14px;line-height:1.5}
+.lv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+@media(min-width:700px){.lv-grid{grid-template-columns:repeat(6,1fr)}}
+@media(min-width:1000px){.lv-grid{grid-template-columns:repeat(8,1fr)}}
+.lv{background:#fff;border-radius:18px;min-height:78px;padding:8px 4px;box-shadow:0 4px 0 rgba(74,53,96,.1);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:22px;font-weight:900}
+.lv.locked{background:#f1ecf5;color:#b9aec6;box-shadow:none}
+.lv.cur{outline:3px solid var(--pink);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{outline-color:#ffd0e3}}
+.lv .stars svg{width:14px;height:14px}
+.big-grid{display:grid;grid-template-columns:1fr;gap:12px}
+@media(min-width:700px){.big-grid{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.big-grid{grid-template-columns:1fr 1fr 1fr}}
+.big{display:flex;align-items:center;gap:12px;background:#fff;border-radius:20px;padding:12px;box-shadow:0 4px 0 rgba(74,53,96,.1);text-align:left;min-height:84px;width:100%}
+.big .bi{font-size:36px;width:60px;height:60px;border-radius:18px;background:var(--sun2);display:flex;align-items:center;justify-content:center;flex:none}
+.big b{font-size:18px;display:block}
+.big small{display:block;color:var(--ink2);font-size:13px;margin-top:2px}
+.big .r{margin-left:auto;text-align:right;flex:none}
+.big.locked{opacity:.55}
+.big.locked .bi{filter:grayscale(1)}
+.hub .big .bi{background:var(--mint2)}
+/* ---------- 底部弹窗 ---------- */
+.mask{position:fixed;inset:0;background:rgba(60,40,80,.38);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.mask.show{display:flex;animation:fadein .2s}
+.sheet{background:#fffaf4;width:100%;max-width:560px;max-height:88vh;max-height:88dvh;overflow:auto;border-radius:26px 26px 0 0;padding:16px 16px calc(18px + env(safe-area-inset-bottom));box-shadow:0 -8px 30px rgba(0,0,0,.15)}
+@media(min-width:700px){.mask{align-items:center}.sheet{border-radius:26px}}
+.sheet-h{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.sheet-h h3{flex:1;font-size:20px;font-weight:900}
+.xbtn{width:42px;height:42px;border-radius:14px;background:#f1e9f7;font-size:20px;font-weight:900;flex:none}
+.say{font-size:16px;line-height:1.65}
+.note{margin:10px 0;background:#fffdf0;border:2px dashed #e6cf8a;border-radius:14px;padding:12px 14px;font-size:16px;line-height:1.75;white-space:pre-line;color:#5b4636}
+.banner{background:var(--mint2);color:#11795a;border-radius:14px;padding:10px 12px;font-weight:800;font-size:15px;margin-bottom:10px;line-height:1.5}
+.banner.bad{background:#ffe3df;color:#c0392b}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.actions .btn{flex:1;min-width:120px}
+/* 密码锁 */
+.lock{margin-top:12px;background:#fff;border-radius:18px;padding:12px;box-shadow:inset 0 0 0 2px #f0e6f7}
+.lock-p{font-size:14px;color:var(--ink2);font-weight:700;text-align:center;margin-bottom:8px}
+.codebox{display:flex;justify-content:center;gap:8px;margin-bottom:10px}
+.codebox span{width:46px;height:54px;border-radius:12px;background:#f6f1fb;border:3px solid #e2d6f0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:var(--ink)}
+.codebox span.f{border-color:var(--purple);background:#fff}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;max-width:330px;margin:0 auto}
+.pad button,.kb button{background:#f6f1fb;border-radius:14px;min-height:50px;font-size:22px;font-weight:900;box-shadow:0 3px 0 #e2d6f0}
+.pad button:active,.kb button:active{transform:translateY(2px);box-shadow:none}
+.kb{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;max-width:420px;margin:0 auto}
+.kb button{min-height:46px;font-size:19px}
+.dials{display:flex;justify-content:center;gap:16px}
+.dial{display:flex;flex-direction:column;align-items:center;gap:6px}
+.dial .ch{width:68px;height:72px;border-radius:16px;background:#fff7e0;border:3px solid #f1c75b;display:flex;align-items:center;justify-content:center;font-size:38px;font-weight:900;font-family:"Noto Serif CJK SC","Songti SC",serif}
+.dial button{width:68px;height:44px;border-radius:12px;background:#f6f1fb;font-size:20px;box-shadow:0 3px 0 #e2d6f0}
+.choices{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.choices button{width:66px;height:66px;border-radius:16px;box-shadow:0 4px 0 rgba(0,0,0,.18);border:3px solid rgba(255,255,255,.7)}
+.lock .ok{width:100%;margin-top:10px}
+/* ---------- 密室 ---------- */
+.room-wrap{max-width:1040px;margin:0 auto;padding:10px 12px 24px;display:grid;gap:10px}
+@media(min-width:900px){.room-wrap{grid-template-columns:1.7fr 1fr;align-items:start}}
+.scene-box{background:#fff;border-radius:20px;box-shadow:var(--shadow);overflow:hidden;line-height:0;position:relative}
+#scene{width:100%;height:auto;display:block;aspect-ratio:4/3}
+#scene .obj,#scene .hit{cursor:pointer}
+#scene .obj:hover{filter:brightness(1.06)}
+#scene .hl{fill:none;stroke:#ffcf00;stroke-width:4;stroke-dasharray:8 6;animation:dash 1s linear infinite;pointer-events:none}
+@keyframes dash{to{stroke-dashoffset:-28}}
+.msg{background:#fff;border-radius:16px;padding:12px 14px;font-size:15px;line-height:1.6;box-shadow:var(--shadow);min-height:52px}
+.inv-h{display:flex;align-items:center;justify-content:space-between;font-weight:900;font-size:15px;margin:2px 4px}
+.inv-h small{font-weight:700;color:var(--ink2);font-size:12px}
+.inv{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.slot{background:rgba(255,255,255,.75);border-radius:14px;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid transparent;padding:4px 2px;box-shadow:0 3px 0 rgba(74,53,96,.08)}
+.slot .ic{font-size:28px;line-height:1.1}
+.slot .nm{font-size:11px;font-weight:700;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.slot.empty{background:rgba(255,255,255,.35);box-shadow:none}
+.slot.sel{border-color:var(--pink);background:#fff1f7;transform:translateY(-3px)}
+.slot.glow .ic{filter:drop-shadow(0 0 6px #ffd23f)}
+.side{display:flex;flex-direction:column;gap:10px}
+.room-tools{display:flex;gap:8px}
+.room-tools .btn{flex:1;font-size:15px;min-height:44px;padding:8px}
+/* ---------- 侦探 ---------- */
+.tabs{display:flex;gap:6px;padding:8px 12px 0;max-width:1040px;margin:0 auto;position:sticky;top:66px;z-index:15}
+.tabs button{flex:1;background:rgba(255,255,255,.7);border-radius:14px 14px 0 0;min-height:46px;font-weight:900;font-size:15px;position:relative}
+.tabs button.on{background:#fff;color:#6a4bd8}
+.tabs button .dot{position:absolute;top:6px;right:8px;width:9px;height:9px;border-radius:50%;background:var(--pink)}
+.case-body{max-width:1040px;margin:0 auto;padding:0 12px 24px}
+.pane{display:none;background:#fff;border-radius:0 0 20px 20px;padding:14px;box-shadow:var(--shadow)}
+.pane.on{display:block}
+.pane h3{font-size:17px;font-weight:900;margin:4px 0 10px;display:flex;align-items:center;gap:6px}
+@media(min-width:900px){.tabs{display:none}.case-body{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-top:12px}.pane{display:block;border-radius:20px}.pane+.pane{margin-top:0}.case-col{display:flex;flex-direction:column;gap:14px}}
+.story p{font-size:16px;line-height:1.75;margin-bottom:6px}
+.sus{display:flex;gap:10px;align-items:flex-start;margin-top:10px}
+.sus .av{font-size:34px;width:52px;height:52px;border-radius:16px;background:var(--sun2);display:flex;align-items:center;justify-content:center;flex:none}
+.sus .sb{background:#f6f1fb;border-radius:4px 16px 16px 16px;padding:8px 12px;font-size:15px;line-height:1.55;flex:1}
+.sus .sb b{display:block;font-size:13px;color:#6a4bd8}
+.clues{display:grid;grid-template-columns:1fr;gap:10px}
+@media(min-width:600px){.clues{grid-template-columns:1fr 1fr}}
+@media(min-width:900px){.clues{grid-template-columns:1fr}}
+.clue{text-align:left;border-radius:16px;padding:12px;min-height:78px;background:linear-gradient(135deg,#a68bff,#7f5cff);color:#fff;box-shadow:0 4px 0 #6243d6;display:flex;gap:10px;align-items:center;width:100%}
+.clue .ci{font-size:30px;flex:none;width:46px;text-align:center}
+.clue.open{background:#fffdf0;color:var(--ink);box-shadow:0 0 0 2px #f1dc9a inset;align-items:flex-start}
+.clue b{display:block;font-size:16px}
+.clue .ct{font-size:15px;line-height:1.6;margin-top:4px}
+.clue table{border-collapse:collapse;margin-top:6px;font-size:14px}
+.clue td{border:1.5px solid #e6cf8a;padding:4px 10px;text-align:center}
+.clue tr:first-child td{background:#fff3c4;font-weight:800}
+.grid-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.ngrid{border-collapse:separate;border-spacing:3px;width:100%}
+.ngrid th{font-size:13px;font-weight:800;color:var(--ink2);padding:2px;vertical-align:bottom;line-height:1.3}
+.ngrid th.rh{text-align:left;font-size:14px;color:var(--ink);white-space:nowrap}
+.ngrid th.rh.fmt{white-space:normal;min-width:4.5em}
+.ngrid th.rh button{display:flex;align-items:center;gap:4px;font-weight:900;font-size:14px;padding:4px;border-radius:10px;min-height:44px}
+.ngrid th.rh.out button{text-decoration:line-through;opacity:.45}
+.ngrid td button{width:100%;min-width:34px;height:46px;border-radius:12px;background:#f6f1fb;font-size:22px;font-weight:900}
+.ngrid td button.y{background:var(--mint2);color:#11795a}
+.ngrid td button.n{background:#ffe3df;color:#d0453a}
+.gnote{font-size:13px;color:var(--ink2);margin-top:8px;line-height:1.5}
+.ask{font-size:18px;font-weight:900;margin-bottom:10px}
+.pick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pick button{background:#fff7e0;border-radius:18px;padding:10px 4px;min-height:92px;box-shadow:0 4px 0 #f1c75b;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:900;font-size:15px}
+.pick button .av{font-size:36px}
+.pick button.on{background:#ffe0ec;box-shadow:0 4px 0 #ff8db8}
+.reasons{display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.reasons button{text-align:left;background:#f6f1fb;border-radius:16px;padding:12px 14px;font-size:15px;line-height:1.55;min-height:56px;box-shadow:0 3px 0 #e2d6f0}
+/* ---------- 益智：通用 ---------- */
+.pz-wrap{max-width:720px;margin:0 auto;padding:10px 12px 24px;display:flex;flex-direction:column;align-items:center;gap:10px}
+.pz-stat{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:14px;font-weight:800}
+.pz-stat span{background:#fff;border-radius:999px;padding:6px 12px;box-shadow:0 2px 0 rgba(74,53,96,.08)}
+.pz-tip{font-size:14px;color:var(--ink2);text-align:center;line-height:1.5;min-height:21px;max-width:520px}
+.pz-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.pz-btns .btn{min-width:104px}
+/* 推箱子 */
+.soko{position:relative;touch-action:none}
+.soko .c{position:absolute}
+.soko .wall{background:#b98a5e;border-radius:6px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.15),inset 0 0 0 2px #a5784e}
+.soko .floor{background:#fff6ea;border-radius:4px}
+.soko .goal:after{content:"";position:absolute;inset:30%;border-radius:50%;background:#ffcf4d;box-shadow:0 0 0 4px rgba(255,207,77,.35)}
+.soko .box,.soko .pl{transition:left .12s ease,top .12s ease;display:flex;align-items:center;justify-content:center}
+.soko .box{border-radius:8px;background:linear-gradient(45deg,transparent 46%,#8a5428 46%,#8a5428 54%,transparent 54%),linear-gradient(-45deg,transparent 46%,#8a5428 46%,#8a5428 54%,transparent 54%),#d79a5a;box-shadow:inset 0 0 0 3px #8a5428,0 3px 0 rgba(0,0,0,.15)}
+.soko .box.on{background:linear-gradient(45deg,transparent 46%,#1d8f68 46%,#1d8f68 54%,transparent 54%),linear-gradient(-45deg,transparent 46%,#1d8f68 46%,#1d8f68 54%,transparent 54%),#58d6a6;box-shadow:inset 0 0 0 3px #1d8f68,0 0 10px #8ef0c8}
+.soko .box.hl{outline:4px dashed #ff5d98;outline-offset:2px;animation:pulse 1s infinite}
+.soko .pl{z-index:3;line-height:1}
+.soko .arrow{position:absolute;z-index:4;display:flex;align-items:center;justify-content:center;color:#ff3d7f;font-weight:900;pointer-events:none;text-shadow:0 0 4px #fff,0 0 8px #fff}
+.soko .spot{position:absolute;border:3px dashed #ff5d98;border-radius:10px;z-index:2;pointer-events:none}
+.dpad{display:grid;grid-template-columns:repeat(3,64px);grid-template-rows:repeat(2,56px);gap:8px}
+.dpad button{background:#fff;border-radius:16px;font-size:24px;box-shadow:0 4px 0 rgba(74,53,96,.13)}
+.dpad button:active{transform:translateY(3px);box-shadow:none}
+.dpad .u{grid-column:2}.dpad .l{grid-column:1;grid-row:2}.dpad .d{grid-column:2;grid-row:2}.dpad .r{grid-column:3;grid-row:2}
+.soko-ctl{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center}
+/* 华容道 */
+.hrd{position:relative;margin-bottom:12px;background:#7a5235;border-radius:18px;padding:8px;box-shadow:var(--shadow),inset 0 0 0 4px #5d3c25;touch-action:none}
+.hrd .pc{position:absolute;border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;color:#fff;transition:left .14s,top .14s;box-shadow:inset 0 -5px 0 rgba(0,0,0,.18),inset 0 0 0 3px rgba(255,255,255,.35);text-shadow:0 1px 0 rgba(0,0,0,.25)}
+.hrd .pc .e{font-size:1.6em;line-height:1.1}
+.hrd .pc.C{background:linear-gradient(180deg,#ff7a7a,#e04848)}
+.hrd .pc.H{background:linear-gradient(180deg,#5fd18f,#2ea866)}
+.hrd .pc.V{background:linear-gradient(180deg,#78a8ff,#4d7fe0)}
+.hrd .pc.S{background:linear-gradient(180deg,#ffcf6a,#f0a828);color:#6b4a00;text-shadow:none}
+.hrd .pc.sel{outline:4px solid #fff;outline-offset:-2px}
+.hrd .pc.hl{outline:4px dashed #ff5d98;outline-offset:2px;animation:pulse 1s infinite}
+.hrd .exit{position:absolute;height:10px;background:#ffcf4d;border-radius:0 0 8px 8px;font-size:11px;color:#6b4a00;font-weight:900;text-align:center;line-height:10px}
+.hrd .arr{position:absolute;z-index:5;width:46px;height:46px;border-radius:50%;background:#fff;color:#ff3d7f;font-size:22px;font-weight:900;box-shadow:0 3px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center}
+.hrd .arr.hint{background:#ff5d98;color:#fff;animation:pulse 1s infinite}
+/* 火柴 */
+.mt-box{background:linear-gradient(180deg,#3b4a6b,#2a3550);border-radius:20px;padding:14px 8px;box-shadow:var(--shadow);width:100%;max-width:640px}
+#mtSvg{width:100%;height:auto;display:block;touch-action:manipulation}
+#mtSvg .st{cursor:pointer}
+#mtSvg .ghost{fill:transparent;stroke:#9fb1d6;stroke-width:2;stroke-dasharray:5 5;opacity:.0;cursor:pointer}
+#mtSvg.picking .ghost{opacity:.85}
+#mtSvg .ghost.hl{opacity:1;stroke:#ffcf4d;stroke-width:4}
+#mtSvg .st.picked rect{fill:#ffe58a}
+#mtSvg .st.hl rect{stroke:#ff5d98;stroke-width:4}
+/* 一笔画 */
+.ln-box{background:#fff;border-radius:20px;box-shadow:var(--shadow);width:100%;max-width:520px;padding:8px}
+#lnSvg{width:100%;height:auto;display:block;touch-action:none}
+/* ---------- 过关弹窗 ---------- */
+.win{text-align:center}
+.win .wt{font-size:24px;font-weight:900;margin:6px 0}
+.win .bigstars{display:flex;justify-content:center;gap:8px;margin:8px 0}
+.win .bigstars svg{width:56px;height:56px;transform:scale(0);animation:pop .4s ease forwards}
+.win .bigstars svg:nth-child(2){animation-delay:.2s}.win .bigstars svg:nth-child(3){animation-delay:.4s}
+@keyframes pop{70%{transform:scale(1.2)}to{transform:scale(1)}}
+.win .ws{color:var(--ink2);font-size:14px;margin-bottom:8px}
+.explain{text-align:left;background:#fff;border-radius:16px;padding:12px 14px;margin-top:10px;box-shadow:inset 0 0 0 2px #efe6f7}
+.explain h4{margin:0 0 6px;font-size:16px}
+.explain ol{margin:0;padding-left:22px;font-size:15px;line-height:1.7}
+.ending{background:var(--sun2);border-radius:14px;padding:10px 12px;font-size:15px;line-height:1.6;margin-top:10px;text-align:left}
+.hint-list{display:flex;flex-direction:column;gap:8px}
+.hint-item{background:#fff7d6;border-radius:14px;padding:10px 12px;font-size:16px;line-height:1.6}
+.hint-item b{color:#a8740a}
+.hint-cost{font-size:13px;color:var(--ink2);margin-top:8px;text-align:center}
+/* toast + 彩带 */
+#toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,30px);background:rgba(74,53,96,.94);color:#fff;padding:12px 18px;border-radius:16px;font-size:15px;font-weight:700;z-index:80;opacity:0;pointer-events:none;transition:.25s;max-width:calc(100vw - 32px);text-align:center;line-height:1.5}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+.confetti{position:fixed;top:-20px;width:10px;height:14px;z-index:90;pointer-events:none;animation:fall linear forwards;border-radius:2px}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.shake{animation:shake .4s}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<!-- 首页 -->
+<section class="screen active" id="scr-home"><div class="wrap">
+  <div class="home-head"><div><div class="logo">解谜大冒险</div><div class="sub">动动脑，一起来破解谜题吧！</div></div>
+    <div style="display:flex;gap:8px;align-items:center"><span class="starpill" id="homeStars"></span><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div></div>
+  <div class="mascot"><div class="face">🦉</div><div class="bubble" id="owlSay">我是猫头鹰博士！每个谜题都藏着线索，慢慢读、仔细想，你一定能解开。</div></div>
+  <div class="games">
+    <button class="game g1" data-act="list" data-kind="room"><div class="gi">🔑</div><div><h2>密室逃脱</h2><p>找线索、拿物品、解密码，逃出神秘的房间！</p><span class="prog" id="prog-room"></span></div></button>
+    <button class="game g2" data-act="list" data-kind="case"><div class="gi">🔍</div><div><h2>侦探推理</h2><p>读故事、看线索、做笔记，找出真相！</p><span class="prog" id="prog-case"></span></div></button>
+    <button class="game g3" data-act="hub"><div class="gi">🧩</div><div><h2>关卡益智</h2><p>推箱子、华容道、移火柴、一笔画，一关比一关难！</p><span class="prog" id="prog-pz"></span></div></button>
+  </div>
+  <div class="home-foot">进度会自动保存在这台设备上 · 卡住了就点「💡 提示」</div>
+</div></section>
+<!-- 关卡列表 -->
+<section class="screen" id="scr-list">
+  <div class="topbar"><button class="iconbtn" data-act="back" aria-label="返回">←</button><div class="ttl" id="listTitle"></div><span class="starpill" id="listStars"></span><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div>
+  <div class="wrap"><p class="list-intro" id="listIntro"></p><div id="listBody"></div></div>
+</section>
+<!-- 关卡益智 hub -->
+<section class="screen hub" id="scr-hub">
+  <div class="topbar"><button class="iconbtn" data-act="home" aria-label="返回首页">←</button><div class="ttl">关卡益智<small>选一种玩法</small></div><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div>
+  <div class="wrap"><div class="big-grid" id="hubBody"></div></div>
+</section>
+<!-- 密室 -->
+<section class="screen" id="scr-room">
+  <div class="topbar"><button class="iconbtn" data-act="back" aria-label="返回">←</button><div class="ttl" id="roomTitle"></div><button class="hintbtn" data-act="hint">💡 提示</button><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div>
+  <div class="room-wrap">
+    <div class="scene-box"><svg id="scene" viewBox="0 0 400 300" role="img" aria-label="房间场景"></svg></div>
+    <div class="side">
+      <div class="msg" id="roomMsg"></div>
+      <div class="inv-h">🎒 物品栏 <small id="invTip">点物品可以选中它</small></div>
+      <div class="inv" id="inv"></div>
+      <div class="room-tools"><button class="btn ghost" data-act="story">📖 看故事</button><button class="btn ghost" data-act="roomReset">🔄 重新开始</button></div>
+    </div>
+  </div>
+</section>
+<!-- 侦探 -->
+<section class="screen" id="scr-case">
+  <div class="topbar"><button class="iconbtn" data-act="back" aria-label="返回">←</button><div class="ttl" id="caseTitle"></div><button class="hintbtn" data-act="hint">💡 提示</button><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div>
+  <div class="tabs" id="caseTabs"><button data-tab="story" class="on">📖 故事</button><button data-tab="clues">🔎 线索</button><button data-tab="notes">📝 笔记</button><button data-tab="accuse">👉 指认</button></div>
+  <div class="case-body">
+    <div class="case-col"><div class="pane on story" data-pane="story" id="paneStory"></div><div class="pane" data-pane="clues" id="paneClues"></div></div>
+    <div class="case-col"><div class="pane" data-pane="notes" id="paneNotes"></div><div class="pane" data-pane="accuse" id="paneAccuse"></div></div>
+  </div>
+</section>
+<!-- 推箱子 -->
+<section class="screen" id="scr-soko">
+  <div class="topbar"><button class="iconbtn" data-act="back" aria-label="返回">←</button><div class="ttl" id="sokoTitle"></div><button class="hintbtn" data-act="hint">💡 提示</button><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div>
+  <div class="pz-wrap">
+    <div class="pz-stat"><span id="sokoMoves"></span><span id="sokoPar"></span></div>
+    <div class="soko" id="soko"></div>
+    <div class="pz-tip" id="sokoTip"></div>
+    <div class="soko-ctl">
+      <div class="dpad"><button class="u" data-dir="U" aria-label="上">⬆️</button><button class="l" data-dir="L" aria-label="左">⬅️</button><button class="d" data-dir="D" aria-label="下">⬇️</button><button class="r" data-dir="R" aria-label="右">➡️</button></div>
+      <div class="pz-btns" style="flex-direction:column"><button class="btn ghost" data-act="undo">↩️ 撤销</button><button class="btn ghost" data-act="restart">🔄 重来</button></div>
+    </div>
+  </div>
+</section>
+<!-- 华容道 -->
+<section class="screen" id="scr-hrd">
+  <div class="topbar"><button class="iconbtn" data-act="back" aria-label="返回">←</button><div class="ttl" id="hrdTitle"></div><button class="hintbtn" data-act="hint">💡 提示</button><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div>
+  <div class="pz-wrap">
+    <div class="pz-stat"><span id="hrdMoves"></span><span id="hrdPar"></span></div>
+    <div class="pz-tip">把红色的<b>曹操</b>移到最下面中间的出口！点一下木块，再点箭头；也可以直接用手指滑动木块。</div>
+    <div class="hrd" id="hrd"></div>
+    <div class="pz-tip" id="hrdTip"></div>
+    <div class="pz-btns"><button class="btn ghost" data-act="undo">↩️ 撤销</button><button class="btn ghost" data-act="restart">🔄 重来</button></div>
+  </div>
+</section>
+<!-- 移火柴 -->
+<section class="screen" id="scr-match">
+  <div class="topbar"><button class="iconbtn" data-act="back" aria-label="返回">←</button><div class="ttl" id="mtTitle"></div><button class="hintbtn" data-act="hint">💡 提示</button><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div>
+  <div class="pz-wrap">
+    <div class="pz-tip"><b>只移动一根火柴</b>，让等式成立！先点一根火柴把它拿起来，再点虚线的空位放下去。</div>
+    <div class="mt-box"><svg id="mtSvg"></svg></div>
+    <div class="pz-tip" id="mtTip"></div>
+    <div class="pz-btns"><button class="btn ghost" data-act="undo">↩️ 放回去</button></div>
+  </div>
+</section>
+<!-- 一笔画 -->
+<section class="screen" id="scr-line">
+  <div class="topbar"><button class="iconbtn" data-act="back" aria-label="返回">←</button><div class="ttl" id="lnTitle"></div><button class="hintbtn" data-act="hint">💡 提示</button><button class="iconbtn" data-act="mute" aria-label="声音开关"></button></div>
+  <div class="pz-wrap">
+    <div class="pz-tip"><b>一笔画完所有的线</b>：每条线只能走一次。先点一个起点，再一个一个点相连的点。</div>
+    <div class="ln-box"><svg id="lnSvg" viewBox="-8 -8 116 116"></svg></div>
+    <div class="pz-tip" id="lnTip"></div>
+    <div class="pz-btns"><button class="btn ghost" data-act="undo">↩️ 撤销</button><button class="btn ghost" data-act="restart">🔄 重来</button></div>
+  </div>
+</section>
+<div class="mask" id="mask"><div class="sheet" id="sheet" role="dialog" aria-modal="true"></div></div>
+<div id="toast"></div>
+<script>
+/*ENGINE-START*/
+(function(G){
+'use strict';
+var E={};
+/* ================= 密室逃脱 ================= */
+function has(st,i){return st.inv.indexOf(i)>=0;}
+function cond(st,c){var neg=c[0]==='!';if(neg)c=c.slice(1);var v=c.indexOf('has:')===0?has(st,c.slice(4)):!!st.flags[c];return neg?!v:v;}
+function condAll(st,list){return !list||list.every(function(c){return cond(st,c);});}
+var R={
+  init:function(){return {flags:{},inv:[],done:false};},
+  obj:function(room,id){for(var i=0;i<room.objects.length;i++)if(room.objects[i].id===id)return room.objects[i];return null;},
+  view:function(room,st,id){var o=R.obj(room,id);if(!o)return null;for(var i=0;i<o.views.length;i++)if(condAll(st,o.views[i].if))return o.views[i];return null;},
+  apply:function(st,eff){(eff.take||[]).forEach(function(i){var k=st.inv.indexOf(i);if(k>=0)st.inv.splice(k,1);});
+    (eff.give||[]).forEach(function(i){if(!has(st,i))st.inv.push(i);});(eff.set||[]).forEach(function(f){st.flags[f]=true;});
+    if(eff.win){st.done=true;st.flags.escaped=true;}return {ok:true,text:eff.text||'',eff:eff};},
+  look:function(room,st,id){var v=R.view(room,st,id);if(!v)return {ok:false,text:''};if(v.set)v.set.forEach(function(f){st.flags[f]=true;});return {ok:true,view:v,text:v.text};},
+  take:function(room,st,id){var v=R.view(room,st,id);if(!v||!v.take)return {ok:false,text:'这里没有可以拿的东西。'};return R.apply(st,v.take);},
+  norm:function(s){return String(s).toUpperCase().replace(/\s+/g,'');},
+  code:function(room,st,id,code){var v=R.view(room,st,id);if(!v||!v.lock)return {ok:false,text:''};
+    if(R.norm(code)===R.norm(v.lock.answer))return R.apply(st,v.lock.ok);return {ok:false,bad:true,text:v.lock.bad||'密码不对哦，再想一想。'};},
+  use:function(room,st,id,item){if(!has(st,item))return {ok:false,text:''};var v=R.view(room,st,id);
+    var u=v&&v.use?v.use.filter(function(x){return x.item===item;})[0]:null;
+    if(!u)return {ok:false,text:(v&&v.wrong)||'好像用不上，换个东西试试吧。'};return R.apply(st,u);},
+  combine:function(room,st,a,b){if(!has(st,a)||!has(st,b)||a===b)return {ok:false,text:''};
+    var c=(room.combos||[]).filter(function(x){return (x.a===a&&x.b===b)||(x.a===b&&x.b===a);})[0];
+    if(!c)return {ok:false,text:'这两样东西放在一起，好像没什么用。'};
+    return R.apply(st,{take:[a,b],give:c.give,set:c.set,text:c.text});},
+  hint:function(room,st){for(var i=0;i<room.hints.length;i++){var h=room.hints[i];if(!st.flags[h.until]&&condAll(st,h.if))return {idx:i,h:h};}return null;}
+};
+E.room=R;
+
+/* ================= 推箱子 ================= */
+// 关卡字符：# 墙；空格 地板；. 目标；$ 箱子；* 箱子在目标上；@ 玩家；+ 玩家在目标上；- 外面
+var S={
+  parse:function(rows){var H=rows.length,W=0,i,x,y;rows.forEach(function(r){W=Math.max(W,r.length);});
+    var L={W:W,H:H,cells:[],goals:[],boxes:[],player:-1};
+    for(y=0;y<H;y++)for(x=0;x<W;x++){var c=rows[y][x]||'-';i=y*W+x;L.cells[i]=c==='#'?'#':c==='-'?'-':' ';
+      if('.*+'.indexOf(c)>=0)L.goals.push(i);if('$*'.indexOf(c)>=0)L.boxes.push(i);if('@+'.indexOf(c)>=0)L.player=i;}
+    // 墙外面的空格（从边缘能走到的）也当作“外面”
+    return L;},
+  dirs:function(W){return {U:-W,D:W,L:-1,R:1};},
+  // 走一步（可能推箱子）；返回新状态或 null
+  step:function(L,st,d){var dd=S.dirs(L.W)[d],n=st.p+dd;if(L.cells[n]!==' ')return null;var bi=st.b.indexOf(n);
+    if(bi>=0){var t=n+dd;if(L.cells[t]!==' '||st.b.indexOf(t)>=0)return null;var nb=st.b.slice();nb[bi]=t;return {p:n,b:nb,push:true,box:bi};}
+    return {p:n,b:st.b.slice(),push:false};},
+  solved:function(L,st){return st.b.every(function(b){return L.goals.indexOf(b)>=0;});},
+  // 不推箱子能走到的路径（BFS），返回方向串或 null
+  walk:function(L,st,to){if(to===st.p)return '';var D=S.dirs(L.W),prev={},q=[st.p];prev[st.p]='';
+    while(q.length){var c=q.shift();for(var k in D){var n=c+D[k];if(prev[n]!==undefined||L.cells[n]!==' '||st.b.indexOf(n)>=0)continue;prev[n]=prev[c]+k;if(n===to)return prev[n];q.push(n);}}
+    return null;},
+  // 按“推”的次数求解（给提示用），返回下一次推：{box,dir,path,pushes}；死局返回 null
+  solve:function(L,st,limit){limit=limit||300000;var W=L.W,D=S.dirs(W),N=L.cells.length,goal={};L.goals.forEach(function(g){goal[g]=1;});
+    function reach(p,bs){var seen={},q=[p],mn=p;seen[p]=1;while(q.length){var c=q.pop();if(c<mn)mn=c;for(var k in D){var n=c+D[k];if(seen[n]||L.cells[n]!==' '||bs.indexOf(n)>=0)continue;seen[n]=1;q.push(n);}}return {seen:seen,mn:mn};}
+    function dead(i){if(goal[i])return false;var u=L.cells[i-W]!==' ',d=L.cells[i+W]!==' ',l=L.cells[i-1]!==' ',r=L.cells[i+1]!==' ';return (u||d)&&(l||r);}
+    function key(bs,mn){return bs.slice().sort(function(a,b){return a-b;}).join(',')+'|'+mn;}
+    var r0=reach(st.p,st.b),k0=key(st.b,r0.mn),seen={},first={};seen[k0]=1;var fr=[{p:st.p,b:st.b,f:null}],pushes=0,count=1;
+    if(S.solved(L,st))return {done:true};
+    while(fr.length){var nx=[];pushes++;
+      for(var s=0;s<fr.length;s++){var cur=fr[s],rr=reach(cur.p,cur.b);
+        for(var bi=0;bi<cur.b.length;bi++){var b=cur.b[bi];for(var k in D){var from=b-D[k],to=b+D[k];
+          if(!rr.seen[from]||L.cells[to]!==' '||cur.b.indexOf(to)>=0||dead(to))continue;
+          var nb=cur.b.slice();nb[bi]=to;var r2=reach(b,nb),kk=key(nb,r2.mn);if(seen[kk])continue;seen[kk]=1;count++;
+          var f=cur.f||{box:bi,dir:k,from:from};
+          if(nb.every(function(x){return goal[x];}))return {box:f.box,dir:f.dir,from:f.from,pushes:pushes};
+          if(count>limit)return {limit:true};nx.push({p:b,b:nb,f:f});}}}
+      fr=nx;}
+    return null;},
+  stars:function(moves,par,hints){var s=hints<=0?3:hints===1?2:1;if(moves>par*2&&s>2)s=2;return s;}
+};
+E.soko=S;
+
+/* ================= 华容道 ================= */
+// 棋盘 4 列 × 5 行；C=曹操(2×2)，E=关羽(横 2×1)，A/B/D/F=竖将(1×2)，G/H/I/J=兵(1×1)
+var K={
+  NAMES:{C:'曹操',E:'关羽',A:'张飞',B:'赵云',D:'马超',F:'黄忠',G:'兵',H:'兵',I:'兵',J:'兵'},
+  parse:function(rows){var cells={},x,y;for(y=0;y<5;y++)for(x=0;x<4;x++){var c=rows[y][x];if(c!=='.')(cells[c]=cells[c]||[]).push([x,y]);}
+    return Object.keys(cells).map(function(id){var cs=cells[id],xs=cs.map(function(c){return c[0];}),ys=cs.map(function(c){return c[1];});
+      var x0=Math.min.apply(null,xs),y0=Math.min.apply(null,ys);return {id:id,x:x0,y:y0,w:Math.max.apply(null,xs)-x0+1,h:Math.max.apply(null,ys)-y0+1};});},
+  occ:function(ps){var o=[];for(var i=0;i<20;i++)o.push(-1);ps.forEach(function(p,k){for(var dy=0;dy<p.h;dy++)for(var dx=0;dx<p.w;dx++)o[(p.y+dy)*4+p.x+dx]=k;});return o;},
+  DIR:{U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]},
+  canMove:function(ps,k,d){var p=ps[k],v=K.DIR[d],x=p.x+v[0],y=p.y+v[1];if(x<0||y<0||x+p.w>4||y+p.h>5)return false;var o=K.occ(ps);
+    for(var dy=0;dy<p.h;dy++)for(var dx=0;dx<p.w;dx++){var c=o[(y+dy)*4+x+dx];if(c!==-1&&c!==k)return false;}return true;},
+  move:function(ps,k,d){var v=K.DIR[d];var n=ps.map(function(p){return {id:p.id,x:p.x,y:p.y,w:p.w,h:p.h};});n[k].x+=v[0];n[k].y+=v[1];return n;},
+  won:function(ps){return ps.some(function(p){return p.id==='C'&&p.x===1&&p.y===3;});},
+  key:function(ps){var o=[];for(var i=0;i<20;i++)o.push('.');ps.forEach(function(p){var t=p.id==='C'?'c':p.w===2?'h':p.h===2?'v':'s';for(var dy=0;dy<p.h;dy++)for(var dx=0;dx<p.w;dx++)o[(p.y+dy)*4+p.x+dx]=t;});return o.join('');},
+  // BFS 求最少步数，返回第一步 {k,d,moves}
+  solve:function(ps,limit){limit=limit||200000;if(K.won(ps))return {done:true};var seen={},fr=[{ps:ps,f:null}],m=0,cnt=0;seen[K.key(ps)]=1;
+    while(fr.length){m++;var nx=[];for(var s=0;s<fr.length;s++){var cur=fr[s];for(var k=0;k<cur.ps.length;k++)for(var d in K.DIR){if(!K.canMove(cur.ps,k,d))continue;
+      var np=K.move(cur.ps,k,d),kk=K.key(np);if(seen[kk])continue;seen[kk]=1;cnt++;var f=cur.f||{k:k,d:d};if(K.won(np))return {k:f.k,d:f.d,moves:m};if(cnt>limit)return {limit:true};nx.push({ps:np,f:f});}}
+      fr=nx;}return null;},
+  stars:function(moves,par,hints){var s=hints<=0?3:hints===1?2:1;if(moves>par*2&&s>2)s=2;return s;}
+};
+E.hrd=K;
+
+/* ================= 移火柴棒 ================= */
+// 七段：a 上，b 右上，c 右下，d 下，e 左下，f 左上，g 中；运算符：h 横，v 竖；'=' 固定
+var SEG={'0':'abcdef','1':'bc','2':'abdeg','3':'abcdg','4':'bcfg','5':'acdfg','6':'acdefg','7':'abc','8':'abcdefg','9':'abcdfg'};
+var M={
+  SEG:SEG,
+  slotsOf:function(c){return c==='+'||c==='-'?['h','v']:c==='='?[]:'abcdefg'.split('');},
+  sticksOf:function(c){return c==='+'?['h','v']:c==='-'?['h']:c==='='?[]:SEG[c].split('');},
+  glyph:function(c,set){var s=set.slice().sort().join('');if(c==='+'||c==='-')return s==='h'?'-':s==='hv'?'+':null;for(var k in SEG)if(SEG[k]===s)return k;return null;},
+  side:function(s){if(!/^\d+([+-]\d+)*$/.test(s)||/(^|[+-])0\d/.test(s))return null;return s.match(/[+-]?\d+/g).reduce(function(a,x){return a+Number(x);},0);},
+  isTrue:function(eq){var p=eq.split('=');if(p.length!==2)return false;var a=M.side(p[0]),b=M.side(p[1]);return a!==null&&b!==null&&a===b;},
+  // 把 sticks（每个字符的棍子数组）还原成算式；任何字符不合法返回 null
+  decode:function(chars,sticks){var out='';for(var i=0;i<chars.length;i++){if(chars[i]==='='){out+='=';continue;}var g=M.glyph(chars[i],sticks[i]);if(g===null)return null;out+=g;}return out;}
+};
+E.match=M;
+
+/* ================= 一笔画 ================= */
+var Ln={
+  deg:function(lv){var d=lv.nodes.map(function(){return 0;});lv.edges.forEach(function(e){d[e[0]]++;d[e[1]]++;});return d;},
+  odd:function(lv){return Ln.deg(lv).map(function(d,i){return d%2?i:-1;}).filter(function(i){return i>=0;});},
+  // 从 cur 出发、在剩下的边里能不能一笔走完（DFS 回溯，图很小）
+  next:function(lv,used,cur){var n=lv.edges.length,left=n-used.filter(Boolean).length;if(left===0)return null;
+    function dfs(c,u,k){if(k===0)return true;for(var i=0;i<n;i++){if(u[i])continue;var e=lv.edges[i];if(e[0]!==c&&e[1]!==c)continue;u[i]=true;var ok=dfs(e[0]===c?e[1]:e[0],u,k-1);u[i]=false;if(ok)return true;}return false;}
+    var starts=cur===null||cur===undefined?lv.nodes.map(function(_,i){return i;}):[cur];
+    for(var s=0;s<starts.length;s++){var c=starts[s];for(var i=0;i<n;i++){if(used[i])continue;var e=lv.edges[i];if(e[0]!==c&&e[1]!==c)continue;var u=used.slice();u[i]=true;
+      if(dfs(e[0]===c?e[1]:e[0],u,left-1))return {from:c,edge:i,to:e[0]===c?e[1]:e[0]};}}
+    return null;}
+};
+E.line=Ln;
+E.starsByHints=function(h){return h<=0?3:h<=2?2:1;};
+G.PZE=E;
+})(typeof window!=='undefined'?window:globalThis);
+/*ENGINE-END*/
+/*ROOMS-START*/
+(function(G){
+'use strict';
+function R(x,y,w,h,f,rx,ex){return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="'+f+'"'+(rx?' rx="'+rx+'"':'')+(ex||'')+'/>';}
+function T(x,y,s,ch,ex){return '<text x="'+x+'" y="'+y+'" font-size="'+s+'" text-anchor="middle" dominant-baseline="central"'+(ex||'')+'>'+ch+'</text>';}
+function P(d,f,ex){return '<path d="'+d+'" fill="'+f+'"'+(ex||'')+'/>';}
+function C(x,y,r,f,ex){return '<circle cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+f+'"'+(ex||'')+'/>';}
+var SK=' stroke="#5b4636" stroke-width="2.5" stroke-linejoin="round"';
+function g(id,inner){return '<g class="obj" data-obj="'+id+'">'+inner+'</g>';}
+var ITEMS={
+  torch:{name:'手电筒',icon:'🔦',desc:'一个手电筒，可是没有电池，按了不亮。'},
+  battery:{name:'电池',icon:'🔋',desc:'两节电池，可以给东西供电。'},
+  torch_on:{name:'亮着的手电筒',icon:'🔦',glow:1,desc:'装好电池的手电筒，能照亮黑乎乎的地方。'},
+  doorkey:{name:'门钥匙',icon:'🗝️',desc:'书房门的钥匙。'},
+  brush:{name:'毛笔',icon:'🖌️',desc:'一支干干的毛笔，要蘸墨才能用。'},
+  ink:{name:'墨汁',icon:'🫙',desc:'一瓶黑黑的墨汁。'},
+  brush_ink:{name:'蘸了墨的毛笔',icon:'🖌️',glow:1,desc:'蘸饱了墨，可以画画写字啦。'},
+  egg:{name:'鸡蛋',icon:'🥚',desc:'新鲜的鸡蛋，做蛋糕要用。'},
+  milk:{name:'牛奶',icon:'🥛',desc:'一盒牛奶，英文叫 milk。'},
+  flour:{name:'面粉',icon:'🌾',desc:'一袋面粉，做蛋糕的主要材料。'},
+  batter:{name:'蛋糕糊',icon:'🥣',desc:'搅好的蛋糕糊，放进烤箱烤一烤就是蛋糕。'},
+  cake:{name:'蛋糕',icon:'🎂',desc:'香喷喷的蛋糕！机器人小厨一定很喜欢。'},
+  lens:{name:'望远镜镜片',icon:'🔍',desc:'一块圆圆的玻璃镜片，好像是望远镜上的。'},
+  key:{name:'铜钥匙',icon:'🔑',desc:'一把铜钥匙。'},
+  shovel:{name:'小铲子',icon:'🪏',desc:'一把小铲子，可以挖土。'},
+  can:{name:'空水壶',icon:'🫖',desc:'一个空空的浇花水壶。'},
+  can_full:{name:'装满水的水壶',icon:'🫖',glow:1,desc:'装满了水，可以浇花了。'},
+  seed:{name:'魔法种子',icon:'🌰',desc:'一颗亮晶晶的种子。'},
+  goldkey:{name:'金钥匙',icon:'🔑',glow:1,desc:'一把闪闪发光的金钥匙。'}
+};
+/* ---------------- 第 1 间：外婆家的书房 ---------------- */
+var r1={id:'r1',title:'外婆家的书房',emoji:'📚',sub:'面积 · 英语 · 组合物品',
+ story:['周末，你在外婆家玩捉迷藏，躲进了书房。','“咔哒”一声，门被风吹上，还自动锁住了！','外婆在门外笑着说：“钥匙就藏在一个蓝色的秘密里。动动脑筋，自己打开门吧！”'],
+ objects:[
+  {id:'door',name:'书房门',box:[300,52,78,160],views:[{text:'门锁得紧紧的，要用钥匙才能打开。',use:[{item:'doorkey',win:true,text:'钥匙一转，“咔哒”——门开了！外婆笑眯眯地说：“真聪明！”'}]}]},
+  {id:'desk',name:'书桌',box:[20,128,120,84],views:[
+    {if:['!drawer_open'],text:'书桌的抽屉上挂着一把三位数的密码锁。桌上压着外婆写的纸条：',note:'抽屉密码：\n外婆的菜园是一个长方形，长 12.5 米，宽 8 米。\n菜园的面积是多少平方米？',
+     lock:{kind:'num',len:3,answer:'100',prompt:'输入三位数密码',ok:{set:['drawer_open'],text:'咔哒！抽屉打开了，里面有一个手电筒。'},bad:'密码不对哦。想一想：长方形的面积 = 长 × 宽。'}},
+    {if:['drawer_open','!took_torch'],text:'抽屉里躺着一个手电筒。',take:{give:['torch'],set:['took_torch'],text:'你拿起了手电筒。按一按开关——不亮，里面没有电池。'}},
+    {text:'抽屉已经空了。'}]},
+  {id:'rug',name:'地毯',box:[120,228,170,62],views:[
+    {if:['!took_battery'],text:'地毯的一角翘了起来，下面好像压着什么东西。',take:{give:['battery'],set:['took_battery'],text:'你在地毯下面找到了两节电池！'}},
+    {text:'地毯下面什么也没有了。'}]},
+  {id:'shelf',name:'书架',box:[150,30,120,184],views:[
+    {if:['!shelf_lit'],text:'书架上摆满了书。最下面一层黑乎乎的，什么也看不清。要是有光就好了。',use:[{item:'torch_on',set:['shelf_lit'],text:'手电筒一照，书架最下层藏着一个蓝色的小盒子！'}],wrong:'书架下面太黑了，这个东西帮不上忙。'},
+    {if:['shelf_lit','!box_open'],text:'蓝色小盒子上有一把字母密码锁，一共 4 格。盒子上贴着一行英文：',note:'What colour is the sky?\n（天空是什么颜色的？用英文单词回答）',
+     lock:{kind:'alpha',len:4,answer:'BLUE',prompt:'输入 4 个英文字母',ok:{set:['box_open'],give:['doorkey'],text:'B-L-U-E！盒子打开了，里面是一把亮闪闪的门钥匙！'},bad:'不对哦。天空是蓝色的，“蓝色”的英文怎么拼？'}},
+    {text:'蓝色小盒子已经空了。书架上有一本《十万个为什么》。'}]},
+  {id:'lamp',name:'台灯',box:[88,78,46,52],views:[{text:'一盏小台灯，灯泡坏了，按开关也不亮。'}]},
+  {id:'window',name:'窗户',box:[34,24,92,78],views:[{text:'窗外是外婆的菜园，绿油油的，正好是一个长方形。'}]}
+ ],
+ combos:[{a:'torch',b:'battery',give:['torch_on'],set:['made_torch'],text:'把电池装进手电筒——亮了！'}],
+ hints:[
+  {until:'drawer_open',obj:'desk',tiers:['先看看书桌：抽屉上有一把密码锁，纸条上有一道题。','长方形的面积 = 长 × 宽，算一算 12.5 × 8。','12.5 × 8 = 100，密码是 100。']},
+  {until:'took_torch',obj:'desk',tiers:['抽屉打开啦，里面有东西。','点书桌，再点「拿起」。','把手电筒拿起来就好。']},
+  {until:'took_battery',obj:'rug',tiers:['手电筒没有电。房间里哪里藏着电池呢？','地上的地毯，有一角翘起来了。','点地毯，把电池拿起来。']},
+  {until:'made_torch',tiers:['手电筒和电池，能不能放在一起？','在下面的物品栏里，先点手电筒，再点电池，就能组合。','先点 🔦，再点 🔋。']},
+  {until:'shelf_lit',obj:'shelf',tiers:['房间里哪里黑乎乎的看不清？','书架最下面一层很黑。','先在物品栏点亮着的手电筒，再点书架。']},
+  {until:'box_open',obj:'shelf',tiers:['盒子上的英文在问：天空是什么颜色的？','天空是蓝色的。“蓝色”的英文有 4 个字母。','输入 B、L、U、E。']},
+  {until:'escaped',obj:'door',tiers:['你已经拿到门钥匙了！','选中门钥匙，再点门。','先点物品栏里的 🗝️，再点右边的门。']}
+ ],
+ explain:['长方形面积 = 长 × 宽：12.5 × 8 = 100（平方米），所以抽屉密码是 100。','手电筒没有电，要先在地毯下找到电池，把两样东西组合起来。','用亮着的手电筒照黑乎乎的书架，发现蓝色小盒子。','天空是蓝色的，“蓝色”的英文是 blue，盒子打开，拿到门钥匙。'],
+ solution:[['code','desk','100'],['take','desk'],['take','rug'],['combine','torch','battery'],['use','shelf','torch_on'],['code','shelf','BLUE'],['use','door','doorkey']],
+ art:function(f){var s='';
+  s+=R(0,0,400,300,'#ffe9c7')+R(0,214,400,86,'#e7b98a')+P('M0 214H400','none',' stroke="#c9945f" stroke-width="3"');
+  for(var i=0;i<8;i++)s+=P('M'+(i*50+10)+' 0v214','none',' stroke="#ffdcae" stroke-width="10" opacity=".5"');
+  s+=g('window',R(36,26,88,72,'#bfe8ff',8,SK)+P('M80 26v72M36 62h88','none',SK)+R(44,70,28,22,'#7ccf6c',3)+R(86,74,30,18,'#7ccf6c',3)+C(108,44,9,'#fff2a8'));
+  s+=g('shelf',R(152,32,116,180,'#b9793f',6,SK)+[60,100,140].map(function(y){return R(158,y,104,8,'#8a5428',2);}).join('')+
+    R(162,40,10,24,'#ff8a8a')+R(174,38,10,26,'#7fb2ff')+R(186,42,8,22,'#ffd166')+R(196,40,12,24,'#8ee0b5')+R(222,44,30,18,'#ff9fc6',3)+
+    R(162,80,14,24,'#a68bff')+R(178,82,10,22,'#ffb36b')+R(190,78,12,26,'#7fd3ff')+R(226,84,10,20,'#ff8a8a')+R(238,80,12,24,'#ffd166')+
+    R(162,118,40,26,'#f6e0c4',3)+T(182,131,16,'📖')+R(210,118,12,26,'#7fb2ff')+R(224,120,10,24,'#8ee0b5')+
+    R(158,150,104,56,f.shelf_lit?'#fff3c4':'#3b2a22',4)+(f.shelf_lit?(f.box_open?R(192,170,36,28,'#5b8cff',4,SK)+P('M192 170l18-12 18 12','#7fa6ff',SK):R(192,170,36,28,'#4d7dff',4,SK)+R(204,180,12,10,'#ffd34d',2)):T(210,178,12,'· · ·',' fill="#7a6250"')));
+  s+=g('desk',R(22,140,116,14,'#a86b38',4,SK)+R(30,154,14,58,'#8a5428')+R(116,154,14,58,'#8a5428')+R(50,156,60,26,f.drawer_open?'#d9a26c':'#c48a52',4,SK)+
+    (f.drawer_open?R(54,160,52,8,'#5b3a1f',2):C(80,169,4,'#5b4636'))+(f.drawer_open?'':R(72,172,16,14,'#ffcf4d',3,' stroke="#a07a10" stroke-width="2"'))+R(46,128,34,14,'#fffaf0',2,' transform="rotate(-6 63 135)"'));
+  s+=g('lamp',P('M98 128h28l-6-8h-16z','#7a5a3a')+R(109,96,6,26,'#7a5a3a')+P('M92 100l10-22h20l10 22z','#ff9fc6',SK));
+  s+=g('rug',P('M128 262c0-20 154-20 154 0s-154 20-154 0z','#ff9fc6',SK)+P('M150 262c0-10 110-10 110 0s-110 10-110 0z','#ffd0e3')+(f.took_battery?'':P('M262 252l18-6 4 12z','#ffb3d0',SK)));
+  s+=g('door',R(302,54,74,158,'#c98b52',6,SK)+R(312,66,54,60,'#d9a26c',4)+R(312,136,54,64,'#d9a26c',4)+C(364,140,5,'#ffcf4d',SK)+R(360,146,8,10,'#5b4636',2));
+  s+=T(350,236,22,'🧸');
+  return s;}
+};
+/* ---------------- 第 2 间：美术教室 ---------------- */
+var r2={id:'r2',title:'美术教室',emoji:'🎨',sub:'古诗 · 成语 · 字谜',
+ story:['放学后，你回美术教室拿忘带的画本。','可是值日生不知道你在里面，把门锁上了！门上有一把会转的“汉字锁”。','美术老师最喜欢出谜题，线索一定就藏在教室里。'],
+ objects:[
+  {id:'door',name:'教室门',box:[326,62,66,150],views:[
+    {if:['!riddle_seen'],text:'门上有一把汉字转盘锁，只有一个格子。要转到哪个字呢？先在教室里找找线索吧。',lock:{kind:'dial',opts:[['牛','吃','告','咬','舌','午']],answer:'告',prompt:'转到正确的字',ok:{win:true,text:'“告”！锁“咔哒”一声开了，你走出了美术教室！'},bad:'不对哦，先去找找线索吧。'}},
+    {text:'门上的汉字转盘锁。你还记得画框后面的字谜：',note:'一口咬掉牛尾巴（打一个字）',lock:{kind:'dial',opts:[['牛','吃','告','咬','舌','午']],answer:'告',prompt:'转到正确的字',ok:{win:true,text:'“告”！锁“咔哒”一声开了，你走出了美术教室！'},bad:'不对哦。把“牛”字的尾巴去掉，再加一个“口”……'}}]},
+  {id:'desk',name:'讲台',box:[30,150,140,62],views:[
+    {if:['!took_brush'],text:'讲台上放着一支毛笔，笔尖干干的。',take:{give:['brush'],set:['took_brush'],text:'你拿起了毛笔。笔尖是干的，要蘸点墨才能用。'}},
+    {text:'讲台上整整齐齐的，什么也没有了。'}]},
+  {id:'board',name:'黑板',box:[16,18,182,104],views:[{text:'黑板上写着一首诗，有两个字被擦掉了：',note:'《山居秋暝》（节选）　唐·王维\n空山新雨后，天气晚来秋。\n明月 ___ 间照，清泉 ___ 上流。\n\n柜子密码：把擦掉的两个字按顺序转出来。'}]},
+  {id:'cabinet',name:'柜子',box:[226,118,86,96],views:[
+    {if:['!cab_open'],text:'柜门上有一把汉字转盘锁，一共两格。',lock:{kind:'dial',opts:[['花','竹','松','柳'],['山','沙','水','石']],answer:'松石',prompt:'把两个字转对',ok:{set:['cab_open'],text:'咔哒！柜门开了，里面有一瓶墨汁。'},bad:'不对哦，再读一读黑板上的诗。'}},
+    {if:['cab_open','!took_ink'],text:'柜子里有一瓶墨汁。',take:{give:['ink'],set:['took_ink'],text:'你拿到了一瓶墨汁。'}},
+    {text:'柜子里只剩下几盒彩笔。'}]},
+  {id:'dragon',name:'龙的画',box:[208,20,108,82],views:[
+    {if:['!dragon_done'],text:'墙上挂着一幅龙的画，威风极了，可是龙没有眼睛！画框下面写着：“这条龙还差最重要的一笔。”',use:[{item:'brush_ink',set:['dragon_done','riddle_seen'],text:'你用蘸了墨的毛笔给龙点上眼睛——画龙点睛！画框“吱呀”一声转开，后面贴着一张纸条：“出门暗号：一口咬掉牛尾巴（打一个字）”。'}],wrong:'龙好像还缺点什么，这个东西帮不上忙。'},
+    {text:'龙有了眼睛，好像要飞起来一样！画框后面的纸条上写着：',note:'出门暗号：一口咬掉牛尾巴（打一个字）'}]},
+  {id:'palette',name:'颜料盘',box:[178,224,92,50],views:[{text:'颜料盘里有红、黄、蓝三种颜色。红色和黄色混在一起，就变成了橙色。'}]}
+ ],
+ combos:[{a:'brush',b:'ink',give:['brush_ink'],set:['made_brush'],text:'毛笔蘸饱了墨汁，可以画画写字了！'}],
+ hints:[
+  {until:'cab_open',obj:'board',tiers:['黑板上的诗少了两个字，柜子的锁也正好有两个格子。','这是王维的名句：“明月□间照，清泉□上流。”月光照在什么树中间？清泉从什么上面流过？','“明月松间照，清泉石上流。”把柜子锁转成「松」「石」。']},
+  {until:'took_ink',obj:'cabinet',tiers:['柜子打开了，里面有东西。','点柜子，把墨汁拿起来。','拿起墨汁就好。']},
+  {until:'took_brush',obj:'desk',tiers:['墨汁要配什么一起用呢？','讲台上有一支毛笔。','点讲台，拿起毛笔。']},
+  {until:'made_brush',tiers:['干毛笔和墨汁，可以组合起来。','在物品栏里先点毛笔，再点墨汁。','先点 🖌️，再点 🫙。']},
+  {until:'dragon_done',obj:'dragon',tiers:['墙上的龙少了什么？有一个成语叫“画龙点睛”。','用蘸了墨的毛笔给龙点上眼睛。','选中蘸了墨的毛笔，再点龙的画。']},
+  {until:'escaped',obj:'door',tiers:['字谜：“一口咬掉牛尾巴”。把“牛”字下面的尾巴去掉，再加上一个“口”。','“牛”去掉尾巴，下面加个“口”，是“告诉”的哪个字？','是「告」字。到门上把转盘转到“告”。']}
+ ],
+ explain:['王维《山居秋暝》：“明月松间照，清泉石上流。”月光照在松树中间，清泉在石头上流淌，所以柜子密码是“松石”。','干毛笔 + 墨汁 = 蘸了墨的毛笔。','画龙点睛：传说画家给画上的龙点上眼睛，龙就飞走了。后来比喻在关键的地方加上一笔，让整体更生动。','字谜“一口咬掉牛尾巴”：“牛”字去掉下面的尾巴，再加上“口”，就是“告”。'],
+ solution:[['code','cabinet','松石'],['take','cabinet'],['take','desk'],['combine','brush','ink'],['use','dragon','brush_ink'],['code','door','告']],
+ art:function(f){var s='';
+  s+=R(0,0,400,300,'#e3f4ff')+R(0,214,400,86,'#cfe0c3')+P('M0 214H400','none',' stroke="#a9c29a" stroke-width="3"');
+  s+=g('board',R(18,20,178,100,'#2f6b4f',6,' stroke="#a86b38" stroke-width="6"')+T(107,44,11,'明月 □ 间照',' fill="#fff"')+T(107,64,11,'清泉 □ 上流',' fill="#fff"')+T(107,90,10,'空山新雨后',' fill="#d7f5e6" opacity=".7"')+R(30,112,22,6,'#fff',2));
+  s+=g('dragon',R(210,22,104,78,'#fff5dc',4,' stroke="#c98b52" stroke-width="6"')+P('M224 78c14-30 30 6 44-20s24-14 30-2','none',' stroke="#2fa36b" stroke-width="7" stroke-linecap="round"')+C(296,58,9,'#2fa36b')+
+    (f.dragon_done?C(299,55,2.6,'#111'):C(299,55,2.6,'#fff',' stroke="#2fa36b"'))+P('M286 50l-4-8M292 48l2-9','none',' stroke="#e05a5a" stroke-width="2"')+(f.dragon_done?T(258,34,10,'✨'):''));
+  s+=g('cabinet',R(228,120,82,94,'#ffcf8a',6,SK)+P('M269 120v94','none',SK)+(f.cab_open?R(232,124,34,86,'#fff1d6',3)+(f.took_ink?'':T(249,190,18,'🫙')):'')+R(258,156,22,18,'#fff',3,SK)+T(269,165,10,'汉',' fill="#5b4636"'));
+  s+=g('desk',R(32,152,136,16,'#c98b52',4,SK)+R(42,168,116,44,'#b9793f',4,SK)+(f.took_brush?'':P('M60 148l46-8','none',' stroke="#7a4a20" stroke-width="5" stroke-linecap="round"')+P('M106 140l10-2','none',' stroke="#eee" stroke-width="6" stroke-linecap="round"')));
+  s+=g('palette',P('M184 252c0-22 80-26 84-2s-14 22-30 18-24 6-40 2-14-6-14-18z','#f6e0c4',SK)+C(204,246,7,'#ff5b5b')+C(224,240,7,'#ffd23f')+C(244,246,7,'#4d8bff')+C(226,258,6,'#ff9a3c'));
+  s+=g('door',R(328,64,62,148,'#8fb6e8',6,SK)+R(338,76,42,44,'#cfe6ff',4)+R(350,140,22,20,'#fff',4,SK)+T(361,150,11,'？',' fill="#5b4636"'));
+  s+=T(90,248,22,'🖍️')+T(320,248,22,'🎨');
+  return s;}
+};
+/* ---------------- 第 3 间：机器人小厨的厨房 ---------------- */
+var r3={id:'r3',title:'机器人厨房',emoji:'🤖',sub:'英语 · 小数 · 方程',
+ story:['你走进了机器人小厨的厨房。','小厨“嘀嘀”两声，把门锁上了：“Hello! I want a cake! 给我做一个蛋糕，我就开门！”','可是做蛋糕的材料都被锁起来了……'],
+ objects:[
+  {id:'robot',name:'机器人小厨',box:[288,104,84,110],views:[
+    {text:'机器人小厨眨着眼睛：“I want a cake! 我想要一个蛋糕！”',use:[{item:'cake',take:['cake'],win:true,text:'小厨开心地转圈：“Thank you! Yummy! 谢谢你，真好吃！”门“嘀”的一声打开了。'}],wrong:'小厨摇摇头：“No, no! I want a cake!”'}]},
+  {id:'fridge',name:'冰箱',box:[18,36,76,178],views:[
+    {if:['!fridge_open'],text:'冰箱门上有一把三位数的密码锁，旁边贴着一张英文菜谱：',note:'Cake Recipe\n· three eggs\n· two cups of milk\n· five spoons of sugar\n\n冰箱密码：按 eggs、milk、sugar 的顺序，把三个数量连起来。',
+     lock:{kind:'num',len:3,answer:'325',prompt:'输入三位数密码',ok:{set:['fridge_open'],text:'冰箱“嘀”地开了！里面有鸡蛋和牛奶。'},bad:'不对哦。three、two、five 分别是几？按顺序连起来。'}},
+    {if:['fridge_open','!took_fridge'],text:'冰箱里有鸡蛋和牛奶。',take:{give:['egg','milk'],set:['took_fridge'],text:'你拿到了鸡蛋和牛奶。'}},
+    {text:'冰箱里只剩一瓶橙汁了。'}]},
+  {id:'cupboard',name:'橱柜',box:[106,26,128,64],views:[
+    {if:['!cup_open'],text:'橱柜上有一把密码锁，可以输入小数点。锁旁边贴着一张购物小票：',note:'购物小票\n面粉　2 袋　每袋 4.5 元\n黄油　1 块　6.8 元\n一共多少元？\n（橱柜密码就是总价）',
+     lock:{kind:'num',len:4,dot:true,answer:'15.8',prompt:'输入总价（可以用小数点）',ok:{set:['cup_open'],text:'橱柜打开了，里面有一袋面粉。'},bad:'不对哦。先算 2 袋面粉多少钱，再加上黄油的钱。'}},
+    {if:['cup_open','!took_flour'],text:'橱柜里有一袋面粉。',take:{give:['flour'],set:['took_flour'],text:'你拿到了面粉。'}},
+    {text:'橱柜里只有几个盘子。'}]},
+  {id:'bowl',name:'大碗',box:[180,104,72,40],views:[
+    {if:['bowl_egg','bowl_milk','bowl_flour','!took_batter'],text:'鸡蛋、牛奶、面粉都放进去了，搅一搅——蛋糕糊做好啦！',take:{give:['batter'],set:['took_batter'],text:'你拿起了一碗蛋糕糊。'}},
+    {if:['!took_batter'],text:'一个大碗。做蛋糕糊要放三样东西：鸡蛋、牛奶和面粉。',use:[{item:'egg',take:['egg'],set:['bowl_egg'],text:'鸡蛋放进碗里了。'},{item:'milk',take:['milk'],set:['bowl_milk'],text:'牛奶倒进碗里了。'},{item:'flour',take:['flour'],set:['bowl_flour'],text:'面粉倒进碗里了。'}],wrong:'这个不是做蛋糕糊的材料哦。'},
+    {text:'碗已经空了。'}]},
+  {id:'oven',name:'烤箱',box:[106,136,72,78],views:[
+    {if:['!oven_set'],text:'烤箱的温度还没有设好。烤箱上贴着一张纸条：',note:'烤蛋糕的温度是 x 摄氏度。\n2x − 60 = 300\n解出 x，就是要设的温度。',
+     lock:{kind:'num',len:3,answer:'180',prompt:'输入温度',ok:{set:['oven_set'],text:'温度设好了：180℃。烤箱“嗡嗡”地热起来了。'},bad:'不对哦。先把 60 移到右边：2x = 300 + 60，再算 x。'},wrong:'先把烤箱的温度设好吧。'},
+    {if:['oven_set','!baked'],text:'烤箱已经热好了，把蛋糕糊放进去吧。',use:[{item:'batter',take:['batter'],give:['cake'],set:['baked'],text:'叮！香喷喷的蛋糕烤好了！'}],wrong:'烤箱里只能放蛋糕糊。'},
+    {text:'烤箱里暖暖的，蛋糕已经拿出来了。'}]},
+  {id:'clock',name:'挂钟',box:[246,14,44,44],views:[{text:'挂钟显示 3:30。小厨说：“Teatime! 下午茶时间到了！”'}]},
+  {id:'door',name:'厨房门',box:[312,24,72,72],views:[{text:'门被小厨锁住了。小厨说：“Cake, please! 先给我做蛋糕！”'}]}
+ ],
+ combos:[],
+ hints:[
+  {until:'fridge_open',obj:'fridge',tiers:['看看冰箱上的英文菜谱，密码就藏在里面。','three = 3，two = 2，five = 5。','按顺序连起来：325。']},
+  {until:'took_fridge',obj:'fridge',tiers:['冰箱开了，里面有做蛋糕的材料。','点冰箱，把东西拿起来。','拿起鸡蛋和牛奶。']},
+  {until:'cup_open',obj:'cupboard',tiers:['上面的橱柜也有一把锁，旁边有一张购物小票。','2 袋面粉：4.5 × 2 = 9（元），再加上黄油 6.8 元。','9 + 6.8 = 15.8，输入 15.8。']},
+  {until:'took_flour',obj:'cupboard',tiers:['橱柜里有面粉。','点橱柜，拿起面粉。','拿起面粉就好。']},
+  {until:'took_batter',obj:'bowl',tiers:['做蛋糕糊要把材料放进大碗里。','选中鸡蛋点大碗，再选牛奶点大碗，再选面粉点大碗。三样都放好，再点大碗拿起蛋糕糊。','一样一样放：🥚 → 碗，🥛 → 碗，🌾 → 碗，然后点碗拿起蛋糕糊。']},
+  {until:'oven_set',obj:'oven',tiers:['烤箱的温度要先设好，纸条上有一个方程。','2x − 60 = 300，两边同时加 60：2x = 360。','x = 360 ÷ 2 = 180，输入 180。']},
+  {until:'baked',obj:'oven',tiers:['烤箱热好了。','选中蛋糕糊，再点烤箱。','把 🥣 放进烤箱。']},
+  {until:'escaped',obj:'robot',tiers:['小厨想要什么？','把蛋糕送给小厨。','选中 🎂，再点机器人小厨。']}
+ ],
+ explain:['英文菜谱：three eggs（3 个鸡蛋）、two cups of milk（2 杯牛奶）、five spoons of sugar（5 勺糖），密码是 325。','小数乘加：4.5 × 2 = 9（元），9 + 6.8 = 15.8（元）。','解方程：2x − 60 = 300 → 2x = 360 → x = 180，烤箱设成 180℃。','把鸡蛋、牛奶、面粉放进大碗做成蛋糕糊，放进烤箱烤成蛋糕，送给小厨。'],
+ solution:[['code','fridge','325'],['take','fridge'],['code','cupboard','15.8'],['take','cupboard'],['use','bowl','egg'],['use','bowl','milk'],['use','bowl','flour'],['take','bowl'],['code','oven','180'],['use','oven','batter'],['use','robot','cake']],
+ art:function(f){var s='';
+  s+=R(0,0,400,300,'#fff4e0')+R(0,214,400,86,'#cfe8f0');for(var i=0;i<8;i++)for(var j=0;j<2;j++)s+=R(i*50+(j%2)*25,214+j*43,25,43,'#b6dbe6',0,' opacity=".6"');
+  s+=R(176,140,124,74,'#f2c9a0',4,SK)+R(176,134,124,10,'#e0b080',3,SK);
+  s+=g('door',R(314,26,68,70,'#ffd6a5',4,SK)+R(324,34,48,30,'#fff',3)+T(348,80,10,'EXIT',' fill="#5b4636" font-weight="700"'));
+  s+=g('fridge',R(20,38,72,174,'#e8f4ff',8,SK)+P('M20 104h72','none',SK)+R(80,58,5,30,'#9fb3c8',2)+R(80,116,5,40,'#9fb3c8',2)+R(30,118,40,46,'#fffbe8',2,' transform="rotate(-4 50 140)"')+T(50,128,7,'Recipe',' fill="#c0392b"')+T(50,142,6,'3 · 2 · 5 ?',' fill="#888" opacity="0"')+
+    (f.fridge_open?'':R(42,70,26,18,'#ffcf4d',3,' stroke="#a07a10" stroke-width="2"')));
+  s+=g('cupboard',R(108,28,124,60,'#ffb58a',6,SK)+P('M170 28v60','none',SK)+C(162,62,3,'#5b4636')+C(178,62,3,'#5b4636')+(f.cup_open?R(112,32,54,52,'#fff1d6',3)+(f.took_flour?'':T(139,58,22,'🌾')):'')+R(186,40,32,22,'#fffbe8',2)+T(202,51,7,'小票',' fill="#5b4636"'));
+  s+=g('oven',R(108,138,68,74,'#5d6d7e',6,SK)+R(116,156,52,40,'#2c3e50',4)+(f.oven_set?R(118,158,48,36,'#ff9a3c',3,' opacity=".75"'):'')+C(124,146,3.5,'#ffcf4d')+C(136,146,3.5,'#ffcf4d')+R(146,142,24,8,'#111',2)+T(158,146,6,f.oven_set?'180℃':'---',' fill="#7CFC00"'));
+  s+=g('bowl',P('M184 116h64c0 22-14 28-32 28s-32-6-32-28z','#ffffff',SK)+(f.bowl_egg||f.bowl_milk||f.bowl_flour?P('M190 120h52c-2 8-10 12-26 12s-24-4-26-12z','#ffe7a8'):'')+P('M232 100l14 22','none',' stroke="#c98b52" stroke-width="4" stroke-linecap="round"'));
+  s+=g('clock',C(268,36,20,'#fff',SK)+P('M268 36v-12M268 36l0 12','none',' stroke="#5b4636" stroke-width="2.5"')+C(268,36,2,'#5b4636'));
+  s+=g('robot',R(304,108,52,44,'#c8d6e5',12,SK)+C(320,128,7,'#fff',SK)+C(340,128,7,'#fff',SK)+C(320,128,3,'#2c3e50')+C(340,128,3,'#2c3e50')+P('M322 142q8 6 16 0','none',' stroke="#5b4636" stroke-width="2.5"')+P('M330 108v-10','none',SK)+C(330,95,5,'#ff6b6b',SK)+
+    R(298,154,64,50,'#dfe6ee',10,SK)+R(316,164,28,20,'#fff',4)+T(330,174,12,'🍰')+R(310,204,12,10,'#8395a7',3)+R(338,204,12,10,'#8395a7',3)+R(296,90,68,18,'#fff',8,SK)+T(330,99,8,'小厨',' fill="#5b4636" font-weight="700"'));
+  s+=T(220,180,20,'🍓')+T(260,184,20,'🧁');
+  return s;}
+};
+/* ---------------- 第 4 间：星星天文台 ---------------- */
+var r4={id:'r4',title:'星星天文台',emoji:'🔭',sub:'数字成语 · 英语 · 梯形面积',
+ story:['晚上，你跟着天文社参观天文台，一不小心走进了观星室。','身后的门“砰”地关上了！这扇门是梯形的，上面有一把密码锁，还有一个钥匙孔。','今晚的星星特别亮，好像在给你指路……'],
+ objects:[
+  {id:'door',name:'梯形门',box:[8,52,72,162],views:[
+    {if:['!door_code'],text:'这扇门是梯形的，门上刻着一道题：',note:'这扇门是一个梯形：\n上底 6 分米，下底 10 分米，高 5 分米。\n门的面积是多少平方分米？\n（答案就是门锁的密码）',
+     lock:{kind:'num',len:2,answer:'40',prompt:'输入两位数密码',ok:{set:['door_code'],text:'密码正确！门上还有一个钥匙孔，还要一把钥匙。'},bad:'不对哦。梯形面积 =（上底 + 下底）× 高 ÷ 2。'},wrong:'先把门上的密码锁打开吧。'},
+    {text:'密码锁已经开了，还差一把钥匙。',use:[{item:'key',win:true,text:'铜钥匙一转，梯形门打开了！星星好像在为你鼓掌。'}],wrong:'这个打不开门锁，要用钥匙。'}]},
+  {id:'desk',name:'书桌上的卷轴',box:[140,148,128,66],views:[{text:'书桌上摊着一张卷轴，上面写着：',note:'四个成语，每个都少了一个数字。\n按顺序把数字连起来，就是保险箱的密码。\n\n___ 颜六色　　七上 ___ 下\n___ 牛一毛　　三心 ___ 意'}]},
+  {id:'safe',name:'保险箱',box:[282,160,76,56],views:[
+    {if:['!safe_open'],text:'一个小保险箱，要输入四位数密码。',lock:{kind:'num',len:4,answer:'5892',prompt:'输入四位数密码',ok:{set:['safe_open'],text:'保险箱打开了，里面有一块圆圆的镜片。'},bad:'不对哦。再看看书桌上的卷轴，四个成语各少了哪个数字？'}},
+    {if:['safe_open','!took_lens'],text:'保险箱里有一块圆圆的镜片。',take:{give:['lens'],set:['took_lens'],text:'你拿到了望远镜镜片。'}},
+    {text:'保险箱已经空了。'}]},
+  {id:'telescope',name:'望远镜',box:[84,92,74,122],views:[
+    {if:['!lens_in'],text:'一架大望远镜，可是前面少了一块镜片，什么也看不见。',use:[{item:'lens',take:['lens'],set:['lens_in'],text:'装上镜片，你从望远镜里看到：月亮上有一行发光的英文——The key is in the green box.'}],wrong:'望远镜少的是一块镜片。'},
+    {text:'望远镜里，月亮上有一行发光的英文：',note:'The key is in the green box.'}]},
+  {id:'boxes',name:'彩色盒子',box:[272,62,120,74],views:[
+    {if:['!box_got'],text:'架子上有四个彩色的盒子。它们都连着机关：打开错的那个，所有盒子会一起合上。要打开哪一个呢？',lock:{kind:'choice',prompt:'选一个盒子打开',opts:[{v:'red',c:'#ff6b6b'},{v:'green',c:'#3cc47c'},{v:'blue',c:'#4d8bff'},{v:'yellow',c:'#ffd23f'}],answer:'green',ok:{set:['box_got'],give:['key'],text:'绿色盒子打开了，里面有一把铜钥匙！'},bad:'盒子里只有一张纸条：“Not me!（不是我！）”盒子又合上了。'}},
+    {text:'绿色盒子已经空了。'}]},
+  {id:'window',name:'圆窗',box:[150,12,110,96],views:[{text:'窗外有好多星星。北斗七星像一把大勺子挂在天上。'}]},
+  {id:'globe',name:'地球仪',box:[238,108,40,40],views:[{text:'地球仪转呀转。我们的地球是一个大大的球体。'}]}
+ ],
+ combos:[],
+ hints:[
+  {until:'safe_open',obj:'desk',tiers:['书桌上的卷轴写着四个成语，每个少一个数字。','五颜六色、七上八下、九牛一毛、三心二意。','按顺序：5、8、9、2，保险箱密码是 5892。']},
+  {until:'took_lens',obj:'safe',tiers:['保险箱开了，里面有东西。','点保险箱，拿起镜片。','拿起镜片就好。']},
+  {until:'lens_in',obj:'telescope',tiers:['这块镜片是哪里的？','望远镜前面少了一块镜片。','选中镜片，再点望远镜。']},
+  {until:'box_got',obj:'boxes',tiers:['望远镜里看到的英文说钥匙在哪里？','The key is in the green box. green 是什么颜色？','green 是绿色，打开绿色的盒子。']},
+  {until:'door_code',obj:'door',tiers:['门是梯形的，门上有一道面积题。','梯形面积 =（上底 + 下底）× 高 ÷ 2。','（6 + 10）× 5 ÷ 2 = 40，输入 40。']},
+  {until:'escaped',obj:'door',tiers:['密码锁开了，还要用钥匙。','选中铜钥匙，再点梯形门。','先点 🔑，再点左边的门。']}
+ ],
+ explain:['数字成语：五颜六色、七上八下、九牛一毛、三心二意，缺的数字是 5、8、9、2，保险箱密码是 5892。','把镜片装进望远镜，看到英文：The key is in the green box.（钥匙在绿色的盒子里。）','green 是绿色，打开绿色盒子拿到铜钥匙。','梯形面积 =（上底 + 下底）× 高 ÷ 2 =（6 + 10）× 5 ÷ 2 = 40（平方分米）。'],
+ solution:[['code','safe','5892'],['take','safe'],['use','telescope','lens'],['code','boxes','green'],['code','door','40'],['use','door','key']],
+ art:function(f){var s='';
+  s+=R(0,0,400,300,'#2b2a5c')+R(0,214,400,86,'#3f3a7a');
+  for(var i=0;i<26;i++){var x=(i*67)%400,y=(i*37)%200;s+=C(x,y,i%3?1.2:1.8,'#fff',' opacity=".55"');}
+  s+=g('window',C(205,60,46,'#14143a',' stroke="#a8a2ff" stroke-width="6"')+C(222,44,12,'#fff6c2')+C(226,40,10,'#14143a')+[[180,40],[190,70],[205,52],[218,80],[232,66],[244,72],[238,50]].map(function(p){return C(p[0],p[1],2.2,'#ffe96b');}).join(''));
+  s+=g('door',P('M10 212L22 54h36l12 158z','#8e7cc3',SK)+P('M28 68h24l6 128h-36z','#a99ad8')+R(40,120,22,16,'#ffd34d',3,SK)+T(51,128,8,f.door_code?'✔':'##',' fill="#5b4636"')+C(54,150,4,'#ffd34d',SK));
+  s+=g('telescope',P('M98 214l22-60 22 60','none',' stroke="#c8c4ff" stroke-width="5"')+P('M90 130l60-30 8 16-60 30z','#e6e2ff',SK)+(f.lens_in?C(155,107,8,'#9fe7ff',SK):C(155,107,8,'#2b2a5c',' stroke="#c8c4ff" stroke-width="2.5" stroke-dasharray="3 3"'))+C(120,150,5,'#c8c4ff'));
+  s+=g('desk',R(142,160,124,12,'#b98bff',4,SK)+R(152,172,10,42,'#8e6bd8')+R(246,172,10,42,'#8e6bd8')+R(160,146,72,16,'#fff6dc',3,SK)+C(160,154,6,'#d9b98a')+C(232,154,6,'#d9b98a'));
+  s+=g('globe',C(258,128,15,'#6ec6ff',SK)+P('M248 122q10 6 18-2M250 134q8-4 16 2','none',' stroke="#3cc47c" stroke-width="3"')+P('M258 143v6h-8h16','none',SK));
+  var bc=['#ff6b6b','#3cc47c','#4d8bff','#ffd23f'];
+  s+=g('boxes',R(274,124,116,8,'#b98bff',3,SK)+bc.map(function(c,i){var x=278+i*28;var open=f.box_got&&i===1;return R(x,96,24,28,c,4,SK)+(open?P('M'+x+' 96l12-10 12 10','#a0f0c0',SK):R(x,92,24,6,c,2,SK));}).join(''));
+  s+=g('safe',R(284,162,72,52,'#9aa5b8',6,SK)+C(306,188,11,'#dfe6ee',SK)+P('M306 180v8','none',SK)+R(326,176,22,24,'#2c3e50',3)+(f.safe_open?R(288,166,64,44,'#3d4656',4)+(f.took_lens?'':C(320,188,8,'#9fe7ff',SK)):''));
+  s+=P('M120 262c0-18 160-18 160 0s-160 18-160 0z','#5a4fa0')+T(200,262,13,'⭐ 🪐 ⭐')+T(352,256,24,'🚀')+T(60,262,18,'🌙');
+  return s;}
+};
+/* ---------------- 第 5 间：秘密花园 ---------------- */
+var r5={id:'r5',title:'秘密花园',emoji:'🌷',sub:'植树问题 · 英语 · 古诗',
+ story:['你推开一扇小木门，来到了一座秘密花园。','身后的门“砰”地关上了！花园里有一扇金色的大门，门上刻着一句古诗。','传说，只要让魔法花开放，就能找到出去的钥匙……'],
+ objects:[
+  {id:'gate',name:'金色大门',box:[152,26,96,124],views:[
+    {if:['!poem_ok'],text:'大门上刻着一句古诗，少了两个字，旁边有两个汉字转盘：',note:'《游园不值》（节选）　宋·叶绍翁\n春色满园关不 ___，\n一枝红 ___ 出墙来。',
+     lock:{kind:'dial',opts:[['开','住','了','走'],['花','桃','杏','梅']],answer:'住杏',prompt:'把两个字转对',ok:{set:['poem_ok'],text:'诗句锁打开了！门上露出一个金色的钥匙孔。'},bad:'不对哦。满园的春色“关不住”，一枝红色的什么花伸出了墙外？'},wrong:'先把门上的诗句锁打开吧。'},
+    {text:'诗句锁已经开了，还差一把金钥匙。',use:[{item:'goldkey',win:true,text:'金钥匙一转，大门缓缓打开——你成功走出了秘密花园！'}],wrong:'要用金色的钥匙才行。'}]},
+  {id:'mailbox',name:'信箱',box:[328,140,40,62],views:[{text:'信箱里有一封信：',note:'Dear friend,\nMy favourite fruit is the apple.\nLook under the apple tree!\n—— Garden Fairy（花园仙子）'}]},
+  {id:'apple',name:'苹果树',box:[8,30,74,112],views:[
+    {if:['!took_shovel'],text:'一棵结满红苹果的树。树下的草丛里好像有东西在发光。',take:{give:['shovel'],set:['took_shovel'],text:'你在苹果树下找到了一把小铲子！'}},
+    {text:'苹果树沙沙地响，好像在说：“加油！”'}]},
+  {id:'pear',name:'梨树',box:[82,50,62,92],views:[{text:'一棵梨树，树下只有几片落叶。'}]},
+  {id:'orange',name:'橘子树',box:[254,44,66,96],views:[{text:'一棵橘子树，树下只有一只小蜗牛。'}]},
+  {id:'shed',name:'小木屋',box:[322,44,74,92],views:[
+    {if:['!took_can'],text:'小木屋门口放着一个空水壶。',take:{give:['can'],set:['took_can'],text:'你拿起了空水壶。'}},
+    {text:'小木屋的门锁着，窗台上有一盆小仙人掌。'}]},
+  {id:'tap',name:'水龙头',box:[280,160,40,52],views:[{text:'一个水龙头，拧开就有水。',use:[{item:'can',take:['can'],give:['can_full'],set:['filled'],text:'哗啦啦——水壶装满了水。'}],wrong:'接水要用水壶哦。'}]},
+  {id:'sign',name:'小路木牌',box:[14,162,50,58],views:[{text:'小路旁边立着一块木牌：',note:'这条小路长 45 米。\n从头到尾，每隔 5 米种一棵树（两头都要种）。\n一共要种多少棵树？'}]},
+  {id:'bed',name:'花坛',box:[66,214,128,52],views:[
+    {if:['!dug'],text:'花坛里的土松松软软的，好像埋着什么东西。用手挖不动。',use:[{item:'shovel',set:['dug'],text:'你用小铲子挖呀挖，挖出了一个小铁盒！'}],wrong:'用这个挖不动土。'},
+    {if:['dug','!tin_open'],text:'小铁盒上有一把两位数的密码锁，盒盖上画着一排小树。',lock:{kind:'num',len:2,answer:'10',prompt:'输入两位数密码',ok:{set:['tin_open'],give:['seed'],text:'铁盒打开了，里面有一颗亮晶晶的魔法种子！'},bad:'不对哦。去看看小路旁的木牌：45 米里有几个 5 米？两头都要种哦。'}},
+    {text:'花坛里有一个空铁盒。'}]},
+  {id:'pot',name:'魔法花盆',box:[212,210,58,58],views:[
+    {if:['!planted'],text:'一个空花盆，上面写着：“种下种子，浇上水，魔法花就会开。”',use:[{item:'seed',take:['seed'],set:['planted'],text:'你把魔法种子种进了花盆。'}],wrong:'花盆里要种的是种子。'},
+    {if:['planted','!bloom'],text:'种子已经种下了，可是土干干的。',use:[{item:'can_full',take:['can_full'],give:['goldkey'],set:['bloom'],text:'浇上水，一朵大大的魔法花开了！花心里有一把金钥匙！'}],wrong:'种子需要的是水。'},
+    {text:'魔法花在阳光下闪闪发光。'}]}
+ ],
+ combos:[],
+ hints:[
+  {until:'took_shovel',obj:'mailbox',tiers:['先看看信箱里的信。','信上说：Look under the apple tree!（看看苹果树下面！）','点苹果树，拿起小铲子。']},
+  {until:'dug',obj:'bed',tiers:['哪里的土软软的，可以挖？','花坛里好像埋着东西。','选中小铲子，再点花坛。']},
+  {until:'tin_open',obj:'sign',tiers:['铁盒上画着一排小树，小路旁的木牌上有一道植树题。','45 ÷ 5 = 9，有 9 段；两头都种，树比段数多 1。','9 + 1 = 10，输入 10。']},
+  {until:'took_can',obj:'shed',tiers:['种子要浇水，先找个水壶。','小木屋门口有一个水壶。','点小木屋，拿起空水壶。']},
+  {until:'filled',obj:'tap',tiers:['空水壶要装水。','右边有一个水龙头。','选中空水壶，再点水龙头。']},
+  {until:'planted',obj:'pot',tiers:['魔法种子种在哪里？','花园里有一个空花盆。','选中种子，再点花盆。']},
+  {until:'bloom',obj:'pot',tiers:['种子种好了，还需要什么？','给花盆浇水。','选中装满水的水壶，再点花盆。']},
+  {until:'poem_ok',obj:'gate',tiers:['大门上的古诗少了两个字。','这是叶绍翁的《游园不值》：满园春色“关不□”，“一枝红□出墙来”。','“春色满园关不住，一枝红杏出墙来。”转成「住」「杏」。']},
+  {until:'escaped',obj:'gate',tiers:['诗句锁开了，还要一把钥匙。','魔法花里的金钥匙！','选中金钥匙，再点大门。']}
+ ],
+ explain:['英文信：Look under the apple tree!（看看苹果树下面！）所以小铲子在苹果树下。','植树问题（两头都种）：段数 = 45 ÷ 5 = 9，棵数 = 段数 + 1 = 10。','种下种子、用水壶装水浇花，魔法花开放，拿到金钥匙。','叶绍翁《游园不值》：“春色满园关不住，一枝红杏出墙来。”所以转盘是“住”“杏”。'],
+ solution:[['take','apple'],['use','bed','shovel'],['code','bed','10'],['take','shed'],['use','tap','can'],['use','pot','seed'],['use','pot','can_full'],['code','gate','住杏'],['use','gate','goldkey']],
+ art:function(f){var s='';
+  s+=R(0,0,400,300,'#c9f0ff')+R(0,150,400,150,'#9ee07a')+P('M200 150c-20 60-60 100-70 150h140c-10-50-50-90-70-150z','#f3e3b8');
+  s+=C(60,24,14,'#fff6a8');
+  function tree(x,y,fruit,fc){return R(x+30,y+60,12,52,'#a0703c',3)+C(x+36,y+40,32,'#5cc46a',SK)+[[-14,-8],[10,-14],[16,8],[-8,14],[2,0]].map(function(d){return T(x+36+d[0],y+40+d[1],11,fruit);}).join('');}
+  s+=g('apple',tree(8,30,'🍎'));s+=g('pear',R(108,100,10,42,'#a0703c',3)+C(113,82,26,'#7bd16a',SK)+T(103,78,10,'🍐')+T(121,90,10,'🍐')+T(114,70,10,'🍐'));
+  s+=g('orange',R(282,96,10,44,'#a0703c',3)+C(287,76,28,'#58b85e',SK)+T(276,70,10,'🍊')+T(296,76,10,'🍊')+T(284,88,10,'🍊'));
+  s+=g('gate',R(154,30,92,118,'#ffd34d',8,SK)+P('M200 30v118','none',SK)+R(162,40,30,46,'#ffe58a',4)+R(208,40,30,46,'#ffe58a',4)+R(186,98,28,18,'#fff6d0',3,SK)+T(200,107,8,f.poem_ok?'🔓':'□□')+C(200,128,4,'#a07a10'));
+  s+=g('shed',P('M324 76l36-30 36 30z','#d35d4e',SK)+R(330,76,60,58,'#e9b77c',3,SK)+R(352,98,18,36,'#a0703c',2)+R(334,86,14,12,'#c9f0ff',2,SK)+(f.took_can?'':T(380,124,16,'🫖')));
+  s+=g('mailbox',R(344,168,6,34,'#a0703c')+R(330,144,36,26,'#ff7a7a',8,SK)+R(338,152,20,6,'#5b4636',2)+P('M362 150v-8h6','none',' stroke="#ffd34d" stroke-width="3"'));
+  s+=g('tap',R(288,168,8,44,'#9aa5b8',2)+R(288,168,26,8,'#9aa5b8',3)+R(308,174,6,8,'#7f8c9d')+C(292,166,5,'#ff6b6b'));
+  s+=g('sign',R(36,190,6,30,'#a0703c')+R(16,164,46,30,'#e9b77c',4,SK)+T(39,174,7,'45 米',' fill="#5b4636"')+T(39,185,8,'🌳🌳🌳'));
+  s+=g('bed',P('M70 240c0-26 120-26 120 0s-120 26-120 0z','#9a6a3c',SK)+T(96,232,12,'🌼')+T(170,234,12,'🌸')+(f.dug?(f.tin_open?R(118,234,24,14,'#c0c8d2',3,SK):R(118,232,24,16,'#c0c8d2',3,SK)+R(126,236,8,6,'#ffd34d',1)):P('M120 244q10-8 20 0','none',' stroke="#6b4423" stroke-width="3"')));
+  s+=g('pot',P('M218 230h46l-6 36h-34z','#e07a4e',SK)+R(214,224,54,10,'#f08a5e',3,SK)+(f.bloom?P('M241 224v-20','none',' stroke="#3c9c46" stroke-width="4"')+T(241,198,26,'🌺'):f.planted?T(241,218,12,'🌱'):''));
+  s+=T(372,262,20,'🦋')+T(28,268,18,'🐞');
+  return s;}
+};
+G.PZ_ITEMS=ITEMS;G.PZ_ROOMS=[r1,r2,r3,r4,r5];
+})(typeof window!=='undefined'?window:globalThis);
+/*ROOMS-END*/
+/*CASES-START*/
+(function(G){
+'use strict';
+// grid.rows：'suspects'（每行一个嫌疑人）或者 {fmt:'假设是{n}…'}；grid.cols：笔记表的列
+var CASES=[
+{id:'c1',title:'谁偷吃了蛋糕？',emoji:'🍰',level:'入门',
+ story:['妈妈做了一个草莓蛋糕，放在厨房的高柜子上，准备晚上给奶奶过生日。','下午妈妈出门买菜，回来一看——蛋糕被咬掉了一大块！','当时家里有三个“嫌疑人”：弟弟豆豆、小狗旺财、小猫咪咪。到底是谁偷吃的呢？'],
+ suspects:[{id:'doudou',name:'豆豆',av:'👦',say:'我一下午都在楼下奶奶家看书，刚刚才回来！'},{id:'wangcai',name:'旺财',av:'🐶',say:'汪汪！（旺财摇着尾巴）'},{id:'mimi',name:'咪咪',av:'🐱',say:'喵～（咪咪正在舔爪子）'}],
+ clues:[
+  {id:'paw',title:'奶油脚印',icon:'🐾',text:'柜子下面有一串小小的奶油脚印，是梅花形状的。这是小动物的脚印，不是人的鞋印。'},
+  {id:'high',title:'高高的柜子',icon:'🗄️',text:'柜子有一米多高。旺财是小短腿，怎么跳也跳不上去；咪咪平时最爱跳到柜子顶上睡觉。'},
+  {id:'call',title:'奶奶的电话',icon:'☎️',text:'奶奶打来电话：“豆豆一下午都在我这儿看书，刚刚才回去。”'}],
+ grid:{rows:'suspects',cols:['会留下梅花脚印','跳得上高柜子','当时在家']},
+ ask:'是谁偷吃了蛋糕？',culprit:'mimi',
+ rebut:{doudou:'奶奶可以作证：豆豆一下午都在奶奶家，他不在现场哦。',wangcai:'旺财是小短腿，跳不上高高的柜子呀。'},
+ reasons:[{t:'梅花脚印是小动物留下的，不是豆豆；旺财跳不上高柜子，只有咪咪上得去。',ok:true},{t:'因为猫都很馋，所以一定是咪咪。'},{t:'因为咪咪不会说话，没法替自己辩解。'}],
+ reasonBad:'这个理由不够有说服力。破案要靠线索：看看脚印和柜子的高度。',
+ hints:['先看看脚印：是人的鞋印，还是小动物的脚印？','脚印是梅花形的，所以不是豆豆。旺财和咪咪，谁跳得上高柜子？','旺财跳不上高柜子，偷吃蛋糕的是咪咪。'],
+ explain:['奶油脚印是梅花形的，是小动物留下的；而且奶奶证明豆豆不在家。→ 排除豆豆。','柜子很高，旺财是小短腿，跳不上去。→ 排除旺财。','只剩下咪咪：它会留下梅花脚印，也跳得上高柜子。'],
+ ending:'原来是咪咪！妈妈把蛋糕咬坏的地方切掉，奶奶笑着说：“咪咪也想给我过生日呢！”'},
+{id:'c2',title:'谁弄坏了花盆？',emoji:'🪴',level:'入门',
+ story:['课间，五(2)班窗台上的一盆小番茄被打翻了，花盆碎成了好几块。','课间留在教室里的只有三个同学：小刚、小红和乐乐。','老师不是要批评谁，只是想知道发生了什么。我们来找找线索吧！'],
+ suspects:[{id:'xg',name:'小刚',av:'👦',say:'我在讲台那边擦黑板，什么都没看见。'},{id:'xh',name:'小红',av:'👧',say:'我一直坐在座位上画画。'},{id:'ll',name:'乐乐',av:'🧒',say:'我在窗边看楼下踢球，可是我没碰花盆！'}],
+ clues:[
+  {id:'print',title:'泥脚印',icon:'👣',text:'花盆旁边的地上有带泥的脚印，鞋底是一圈一圈的波浪花纹。'},
+  {id:'shoe',title:'三双鞋',icon:'👟',text:'小刚和乐乐都穿着波浪花纹鞋底的运动鞋；小红穿的是平底布鞋，鞋底是光光的。'},
+  {id:'monitor',title:'班长的话',icon:'🙋',text:'班长说：“课间小刚一直在讲台那边擦黑板，没有去过窗边。”'},
+  {id:'draw',title:'小红的画',icon:'🖼️',text:'小红的画上有一个红红的小番茄，画得可像了。'}],
+ grid:{rows:'suspects',cols:['穿波浪花纹的鞋','去过窗边']},
+ ask:'是谁弄坏了花盆？',culprit:'ll',
+ rebut:{xg:'班长说小刚一直在讲台擦黑板，没去过窗边哦。',xh:'小红穿的是平底布鞋，留不下波浪花纹的脚印。'},
+ reasons:[{t:'脚印是波浪花纹的，只有小刚和乐乐穿这种鞋；班长说小刚没去过窗边，所以是乐乐。',ok:true},{t:'因为小红画了小番茄，她一定很喜欢那盆小番茄。'},{t:'因为乐乐的鞋最脏。'}],
+ reasonBad:'这个理由线索里没有说哦。再看看脚印、鞋子和班长的话。',
+ hints:['花盆旁边的脚印是什么花纹？谁穿这种鞋？','小刚和乐乐都穿波浪花纹的鞋。他们俩谁去过窗边？','班长说小刚没去过窗边，所以是乐乐。小红的画只是“干扰线索”。'],
+ explain:['脚印是波浪花纹的；小红穿平底布鞋。→ 排除小红。','班长作证：小刚一直在讲台擦黑板，没去过窗边。→ 排除小刚。','只剩乐乐：他穿波浪花纹的鞋，而且就在窗边。','小红画了小番茄，和花盆被打翻没有关系——这是一条“干扰线索”，要学会分辨。'],
+ ending:'乐乐红着脸说，他看球太激动，胳膊把花盆碰倒了，怕被批评就没敢说。大家一起把小番茄种进了新花盆。'},
+{id:'c3',title:'图书馆的书去哪了？',emoji:'📕',level:'入门',
+ story:['学校图书馆新到了一本《昆虫记》。','管理员王老师下午 3 点把它放上新书架，3 点半再去看——书不见了！借书本上也没有记录。','下午来过图书馆的有三位同学。看看登记表，想一想时间。'],
+ suspects:[{id:'aa',name:'安安',av:'👧',say:'我两点半就来了，三点前就走了。'},{id:'tt',name:'天天',av:'👦',say:'我是来还书的，还完就走了。'},{id:'dd',name:'朵朵',av:'👧',say:'我来的时候，王老师已经在找书了。'}],
+ clues:[
+  {id:'log',title:'进出登记表',icon:'📋',text:'图书馆门口的进出登记表：',table:[['名字','进来','离开'],['安安','2:30','2:55'],['天天','3:10','3:20'],['朵朵','3:40','3:50']]},
+  {id:'teacher',title:'王老师的话',icon:'👩‍🏫',text:'“3 点整，我亲手把《昆虫记》放上新书架。3 点半我再去看，它就不见了。”'},
+  {id:'bag',title:'朵朵的书包',icon:'🎒',text:'朵朵的书包里有一本《昆虫图鉴》，封面上写着她自己的名字，是她从家里带来的。'}],
+ grid:{rows:'suspects',cols:['3:00–3:30 在图书馆']},
+ ask:'是谁拿走了《昆虫记》？',culprit:'tt',
+ rebut:{aa:'安安 2:55 就离开了，那时候书还没放上书架呢。',dd:'朵朵 3:40 才来，书 3:30 就已经不见了。'},
+ reasons:[{t:'书是在 3:00 到 3:30 之间不见的，这段时间只有天天在图书馆。',ok:true},{t:'因为朵朵的书包里也有一本讲昆虫的书。'},{t:'因为来还书的人都会顺手拿书。'}],
+ reasonBad:'这个理由不对哦。关键是时间：书是什么时候不见的？那时谁在图书馆？',
+ hints:['书是几点到几点之间不见的？','书在 3:00 还在，3:30 不见了。看看登记表，谁在这段时间里来过？','安安 2:55 就走了，朵朵 3:40 才来，只有天天（3:10–3:20）在。'],
+ explain:['王老师说：书 3:00 还在，3:30 不见了。所以要找 3:00–3:30 在图书馆的人。','安安 2:30–2:55：她走的时候书还没放上去。→ 排除。','朵朵 3:40–3:50：她来的时候书已经不见了。→ 排除。','天天 3:10–3:20，正好在这段时间里。朵朵的《昆虫图鉴》是她自己的书，是干扰线索。'],
+ ending:'天天挠挠头说，他以为那本书放错了位置，就把它放到了“昆虫”那一排的旧书架上。大家一起去找——书果然在那儿！'},
+{id:'c4',title:'谁打翻了颜料？',emoji:'🎨',level:'进阶',
+ story:['美术课后，地上洒了一大片蓝色颜料。','周老师想知道是谁不小心打翻的，好教他怎么收拾干净。','坐在颜料桌旁边的有四个同学：小雨、明明、嘉嘉和果果。'],
+ suspects:[{id:'xy',name:'小雨',av:'👧',say:'我今天画的是红太阳，没用蓝色。'},{id:'mm',name:'明明',av:'👦',say:'我画的是大海，用了好多蓝色，袖子都弄脏了。可我一直坐着没动！'},{id:'jj',name:'嘉嘉',av:'🧒',say:'我画的是蓝天，中间去洗过一次笔。'},{id:'gg',name:'果果',av:'👧',say:'我画的是草地，中间去拿过纸巾。'}],
+ clues:[
+  {id:'sleeve',title:'袖子扫过的印子',icon:'👕',text:'颜料盒是被袖子扫倒的，桌边还留着一道袖子擦过的蓝印子。打翻颜料的人，袖口上一定沾着蓝颜料。'},
+  {id:'cuffs',title:'看看袖口',icon:'🔎',text:'明明和嘉嘉的袖口上都沾着蓝颜料；小雨和果果的袖口干干净净。'},
+  {id:'drops',title:'一串蓝点点',icon:'💧',text:'蓝色的颜料点从颜料桌一直滴到洗笔池。打翻颜料的人，当时离开过座位。'},
+  {id:'mate',title:'同桌的话',icon:'🗣️',text:'明明的同桌说：“明明一直坐在我旁边画画，一次也没站起来过。”'}],
+ grid:{rows:'suspects',cols:['袖口有蓝颜料','离开过座位']},
+ ask:'是谁打翻了颜料？',culprit:'jj',
+ rebut:{xy:'小雨的袖口干干净净，她没碰过蓝颜料。',mm:'同桌说明明一次也没站起来，可是打翻颜料的人离开过座位。',gg:'果果的袖口干干净净，打翻颜料的人袖口会沾上蓝色。'},
+ reasons:[{t:'袖口有蓝颜料的只有明明和嘉嘉；明明一直没离开座位，所以是嘉嘉。',ok:true},{t:'因为嘉嘉画的是蓝天，用了蓝色。'},{t:'因为嘉嘉去过洗笔池，洗笔池旁边有颜料。'}],
+ reasonBad:'只凭这一点还不够哦：明明也用了蓝色，果果也离开过座位。要把几条线索合在一起想。',
+ hints:['打翻颜料的人有两个特点，分别在两张线索卡里。','特点一：袖口有蓝颜料（明明、嘉嘉）。特点二：离开过座位。','明明一直没站起来，两个特点都符合的只有嘉嘉。'],
+ explain:['线索：打翻颜料的人袖口有蓝颜料。明明、嘉嘉的袖口有；小雨、果果没有。→ 排除小雨、果果。','线索：打翻颜料的人离开过座位。同桌证明明明一直坐着。→ 排除明明。','两个特点都符合的只有嘉嘉。','注意：“用了蓝色”或者“去过洗笔池”单独一条都不够，要把线索合起来。'],
+ ending:'嘉嘉不好意思地说，她起身去洗笔的时候，袖子扫倒了颜料盒。周老师教大家用抹布从外往里擦，地板很快就干净了。'},
+{id:'c5',title:'小金鱼吃撑了',emoji:'🐠',level:'进阶',
+ story:['班里的小金鱼“泡泡”今天肚子圆滚滚的——有人偷偷多喂了它鱼食！','老师说过，每天只能由值日生喂一次。今天的值日生已经喂过了。','老师问了四个同学，他们各说了一句话。后来发现：四个人里只有一个人说了假话，偷偷喂鱼的就是说假话的那个人。'],
+ suspects:[{id:'hh',name:'浩浩',av:'👦',say:'我没有喂鱼。'},{id:'tt',name:'婷婷',av:'👧',say:'是浩浩喂的。'},{id:'xy',name:'小宇',av:'🧒',say:'不是我喂的。'},{id:'jj',name:'佳佳',av:'👧',say:'婷婷说的不对。'}],
+ clues:[
+  {id:'rule',title:'老师的发现',icon:'👩‍🏫',text:'四个人里，只有一个人说了假话，其他三个人说的都是真话。说假话的人，就是偷偷喂鱼的人。'},
+  {id:'tip',title:'推理小窍门',icon:'💡',text:'可以一个一个试：假设是浩浩喂的，那四句话里各是真还是假？假话是不是正好只有一句，而且是浩浩说的？再假设是婷婷……'},
+  {id:'can',title:'鱼食罐',icon:'🫙',text:'鱼食罐的盖子没有拧紧，罐子旁边撒了几粒鱼食。'}],
+ grid:{rows:{fmt:'如果是{n}'},cols:['浩浩的话','婷婷的话','小宇的话','佳佳的话'],note:'✓ 表示这句话是真的，✗ 表示是假的'},
+ ask:'是谁偷偷喂了鱼？',culprit:'tt',
+ rebut:{hh:'假设是浩浩：浩浩的话是假的，佳佳说“婷婷说的不对”也成了假的，有两句假话，不对哦。',xy:'假设是小宇：婷婷说“是浩浩喂的”是假的，小宇说“不是我”也是假的，有两句假话，不对哦。',jj:'假设是佳佳：说假话的是婷婷，可喂鱼的却是佳佳，和“说假话的就是喂鱼的人”对不上哦。'},
+ reasons:[{t:'假设是婷婷：只有婷婷那句“是浩浩喂的”是假的，其他三句都是真的，正好符合。',ok:true},{t:'因为婷婷说了别人的名字，想让别人背锅。'},{t:'因为佳佳说婷婷不对，佳佳一定说的是真话。'}],
+ reasonBad:'这个理由还不够严密。试试一个一个假设，看看哪一种情况正好只有一句假话。',
+ hints:['用“假设法”：先假设是浩浩喂的，看看四句话各是真是假。','注意婷婷和佳佳的话是相反的，她们俩一定有一个人说了假话。所以说假话的就在她们俩中间。','假设是婷婷：婷婷的话假，其他都真，只有一句假话，正好符合。答案是婷婷。'],
+ explain:['婷婷说“是浩浩喂的”，佳佳说“婷婷说的不对”，这两句话一真一假，所以说假话的人就在婷婷和佳佳中间。','如果佳佳说假话，那婷婷就是对的，喂鱼的是浩浩——可是说假话的人应该就是喂鱼的人，矛盾。','所以说假话的是婷婷，喂鱼的是婷婷。检查：浩浩“我没喂”真，小宇“不是我”真，佳佳“婷婷不对”真，只有一句假话。✓'],
+ ending:'婷婷小声说，她看泡泡一直张嘴，以为它饿了。老师告诉大家：小金鱼吃太多会生病，每天喂一次就够啦。'},
+{id:'c6',title:'挂在树上的风筝',emoji:'🪁',level:'进阶',
+ story:['风筝比赛上，一只绿色的风筝断了线，挂在了大树上。','比赛的四个小朋友，风筝颜色各不相同：红、黄、蓝、绿。','可是大家离得太远，谁也没看清绿色风筝是谁的。请你帮忙找到它的主人，好把风筝还给他！'],
+ suspects:[{id:'xd',name:'小东',av:'👦',say:'我的风筝和晴天时天空的颜色一样！'},{id:'xx',name:'小西',av:'👧',say:'我的风筝不是黄色的，也不是绿色的。'},{id:'xn',name:'小南',av:'🧒',say:'我的风筝不是红色的，就是黄色的。'},{id:'xb',name:'小北',av:'👦',say:'我刚才在追蝴蝶，也没看清……'}],
+ clues:[
+  {id:'rule',title:'比赛规则',icon:'📜',text:'每人放一只风筝，四只风筝的颜色都不一样：红、黄、蓝、绿各一只。'},
+  {id:'truth',title:'裁判的话',icon:'🧑‍⚖️',text:'裁判说：“这几个孩子都很诚实，他们说的话都是真的。”'},
+  {id:'photo',title:'比赛照片',icon:'📷',text:'照片上四只风筝飞得高高的：红、黄、蓝、绿。可惜拍不到是谁拿着线。'}],
+ grid:{rows:'suspects',cols:['红','黄','蓝','绿'],note:'每人只能有一种颜色，每种颜色也只属于一个人'},
+ ask:'绿色风筝是谁的？',culprit:'xb',owner:true,
+ rebut:{xd:'晴天的天空是蓝色的，小东的风筝是蓝色的哦。',xx:'小西自己说了，她的风筝不是绿色的。',xn:'小南的风筝不是红色就是黄色，不会是绿色。'},
+ reasons:[{t:'小东是蓝色；小西不是黄、不是绿，只能是红；小南就只能是黄；剩下的绿色是小北的。',ok:true},{t:'因为小北说他没看清，一定是在找自己的风筝。'},{t:'因为小北是最后一个说话的。'}],
+ reasonBad:'这样猜不算推理哦。用表格把每个人不可能的颜色打 ✗，看看最后剩下什么。',
+ hints:['先找最确定的一句话：晴天的天空是什么颜色？','小东是蓝色。小西不是黄、不是绿，也不能是蓝（被小东用了），那她是什么颜色？','小西是红色，小南只能是黄色，剩下绿色是小北的。'],
+ explain:['小东的风筝和晴天天空一样，是蓝色。','小西不是黄色、不是绿色，蓝色又被小东用了，所以小西是红色。','小南不是红色就是黄色，红色已经是小西的，所以小南是黄色。','红、黄、蓝都有主人了，剩下的绿色风筝是小北的。'],
+ ending:'小北高兴地跳了起来：“原来是我的！”体育老师用长竹竿把风筝取了下来，小北又让它飞上了天。'},
+{id:'c7',title:'黑板上的小猪',emoji:'🐷',level:'挑战',
+ story:['早上，班长发现黑板上画了一只戴眼镜的小猪，旁边还写着“早上好！”。','小猪画得挺可爱，老师想找到画画的同学，请他下次画在画纸上，还想把他推荐进美术小组呢。','昨天放学后，留在教室做值日的有五个同学。'],
+ suspects:[{id:'zx',name:'子轩',av:'👦',say:'我扫完地就走了。'},{id:'xy',name:'欣怡',av:'👧',say:'我在擦窗户。'},{id:'hr',name:'浩然',av:'🧒',say:'我四点就去踢足球了！'},{id:'zh',name:'梓涵',av:'👧',say:'我在整理图书角。'},{id:'yn',name:'一诺',av:'👦',say:'我在倒垃圾。'}],
+ clues:[
+  {id:'hand',title:'“好”字的写法',icon:'✍️',text:'“早上好”的“好”字，女字旁写得特别大。老师说：欣怡、浩然、梓涵写“好”字时，女字旁都写得大大的；子轩和一诺不会这样写。'},
+  {id:'high',title:'小猪的位置',icon:'📏',text:'小猪画在黑板的最上面，要踮起脚才够得着。梓涵是班里个子最矮的，踮起脚也够不着那么高。'},
+  {id:'guard',title:'保安叔叔的话',icon:'👮',text:'“我 4 点半巡查的时候，黑板还是干干净净的。”'},
+  {id:'team',title:'足球队记录',icon:'⚽',text:'足球训练记录：',table:[['名字','训练时间'],['浩然','4:00–5:30']]}],
+ grid:{rows:'suspects',cols:['女字旁写得大','够得着黑板顶','4点半后在教室']},
+ ask:'是谁画了小猪？',culprit:'xy',
+ rebut:{zx:'子轩写“好”字时，女字旁不会写得那么大。',yn:'一诺写“好”字时，女字旁不会写得那么大。',zh:'梓涵个子最矮，够不着黑板最上面。',hr:'浩然 4:00 到 5:30 都在踢足球，可是 4 点半时黑板还是干净的。'},
+ reasons:[{t:'女字旁写得大的有欣怡、浩然、梓涵；梓涵够不着；浩然 4 点就去训练了，小猪是 4 点半以后画的。只剩欣怡。',ok:true},{t:'因为欣怡在擦窗户，离黑板很近。'},{t:'因为女生都喜欢画小猪。'}],
+ reasonBad:'这个理由不能证明是她哦。用三条线索一个一个排除。',
+ hints:['先看“好”字的写法，能排除哪两个人？','剩下欣怡、浩然、梓涵。梓涵够得着黑板顶吗？浩然 4 点半以后在不在教室？','梓涵够不着，浩然在踢足球，画小猪的是欣怡。'],
+ explain:['字迹：女字旁写得大的有欣怡、浩然、梓涵。→ 排除子轩、一诺。','高度：梓涵够不着黑板最上面。→ 排除梓涵。','时间：4 点半黑板还干净，说明小猪是 4 点半以后画的；浩然 4:00–5:30 在踢足球。→ 排除浩然。','三个条件都符合的只有欣怡。'],
+ ending:'欣怡笑着承认了，她想给大家一个早上的惊喜。老师夸她的小猪画得好，送了她一本大大的画本。'},
+{id:'c8',title:'爷爷的生日礼物',emoji:'🎁',level:'挑战',
+ story:['明天是爷爷的生日，全家准备了一个礼物盒，放在客厅的桌子上。','晚饭后，礼物盒不见了！原来是有人把它藏起来，想给爷爷一个更大的惊喜。','今天家里在玩“反话游戏”：五个人里，只有一个人说的是真话，其他人说的都是反话（假话）。'],
+ suspects:[{id:'ba',name:'爸爸',av:'👨',say:'礼物是妈妈藏的。'},{id:'ma',name:'妈妈',av:'👩',say:'礼物是姐姐藏的。'},{id:'gg',name:'哥哥',av:'👦',say:'礼物不是我藏的。'},{id:'jj',name:'姐姐',av:'👧',say:'妈妈说的是反话。'},{id:'nn',name:'奶奶',av:'👵',say:'礼物不是哥哥藏的。'}],
+ clues:[
+  {id:'rule',title:'反话游戏',icon:'🔄',text:'五句话里只有一句是真话，其他四句都是假话。礼物只被一个人藏了起来。'},
+  {id:'ribbon',title:'掉落的丝带',icon:'🎀',text:'礼物盒上的丝带掉在了楼梯上。哥哥和姐姐的房间都在楼上。'},
+  {id:'tip',title:'推理小窍门',icon:'💡',text:'找一找：哪两句话是“一真一假”、正好相反的？真话只有一句，它一定就在这两句里面。'}],
+ grid:{rows:{fmt:'如果是{n}'},cols:['爸爸','妈妈','哥哥','姐姐','奶奶'],note:'✓ 表示这句话是真的，✗ 表示是假的。真话应该只有一句'},
+ ask:'是谁藏起了礼物？',culprit:'gg',
+ rebut:{ba:'假设是爸爸：哥哥“不是我”、姐姐“妈妈说的是反话”、奶奶“不是哥哥”都成了真话，真话太多啦。',ma:'假设是妈妈：爸爸的话、哥哥的话、奶奶的话都是真的，真话太多啦。',jj:'假设是姐姐：妈妈的话、哥哥的话、奶奶的话都是真的，真话太多啦。',nn:'假设是奶奶：哥哥、姐姐和奶奶自己的话都是真的，真话太多啦。'},
+ reasons:[{t:'妈妈和姐姐的话正好相反，真话就在她们俩中间，所以爸爸、哥哥、奶奶说的都是假话；哥哥说“不是我”是假话，那就是哥哥藏的。',ok:true},{t:'因为丝带掉在楼梯上，哥哥住在楼上。'},{t:'因为奶奶说不是哥哥，奶奶说的一定是反话。'}],
+ reasonBad:'这一条还不够哦：姐姐也住在楼上。试试找出哪两句话“一真一假”。',
+ hints:['先找一对正好相反的话：姐姐说“妈妈说的是反话”。','妈妈和姐姐一定一个真一个假，所以唯一的真话在她们俩中间，爸爸、哥哥、奶奶说的全是假话。','哥哥说“礼物不是我藏的”是假话，所以礼物是哥哥藏的。'],
+ explain:['姐姐说“妈妈说的是反话”，所以妈妈和姐姐一个说真话、一个说假话。','真话只有一句，它在妈妈和姐姐中间，那么爸爸、哥哥、奶奶说的都是假话。','哥哥说“不是我藏的”是假话 → 是哥哥藏的。检查：奶奶说“不是哥哥”是假话 ✓；爸爸说“是妈妈”是假话 ✓；妈妈说“是姐姐”是假话，姐姐说“妈妈说的是反话”是真话 → 只有一句真话 ✓。','楼梯上的丝带也和答案对得上：哥哥住在楼上。'],
+ ending:'哥哥从房间里抱出礼物盒，上面贴着他画的爷爷画像：“我想让礼物更漂亮！”第二天，爷爷看到礼物，笑得合不拢嘴。'}
+];
+G.PZ_CASES=CASES;
+})(typeof window!=='undefined'?window:globalThis);
+/*CASES-END*/
+/*LEVELS-START*/
+(function(G){
+'use strict';
+G.PZ_LEVELS={"soko":[{"rows":["#######","#@ $ .#","#######"],"par":3,"tip":"把箱子推到星星上就过关啦！走到箱子旁边，朝箱子的方向走，就能推它。"},
+{"rows":["######","#@   #","# $  #","#  # #","#   .#","######"],"par":7,"tip":"箱子只能推，不能拉。先想好从哪一边推。"},
+{"rows":["######-","#    ##","#.$   #","#.$   #","## #@ #","-##  ##","--####-"],"par":6,"tip":"两个箱子，两颗星星。一个一个来。"},
+{"rows":["######","#. $@#","#   $#","###  #","#   .#","######"],"par":6,"tip":"小心别把箱子推到墙角，推进角落就拉不出来了。"},
+{"rows":["#######","#     #","#.  . #","#   $ #","#$  @ #","#     #","#######"],"par":8,"tip":"先推哪个箱子？想好顺序再动手。"},
+{"rows":["#######","#@#   #","# $  .#","##$#  #","#   # #","# . ###","#####--"],"par":8,"tip":""},
+{"rows":["#######","#     #","#  ## #","#@  . #","# $$  #","#   . #","#######"],"par":10,"tip":""},
+{"rows":["######-","#@#. ##","#$ $  #","#..$  #","# #   #","#  #  #","#######"],"par":10,"tip":""},
+{"rows":["#######","#  #  #","#. $.##","##   ##","#   $@#","#    ##","######-"],"par":12,"tip":""},
+{"rows":["#######","#     #","# .#$ #","#  #. #","## $  #","#  @  #","#######"],"par":14,"tip":""},
+{"rows":["#######-","#  ## ##","#   .  #","#  .#  #","#  $ $##","#.   $@#","########"],"par":14,"tip":""},
+{"rows":["########","#      #","#.  .$@#","##   .##","##  $$ #","#      #","########"],"par":15,"tip":""},
+{"rows":["--####-","###  ##","#  .$ #","#. .$ #","#   $ #","#   #@#","#######"],"par":15,"tip":""},
+{"rows":["#######","#    @#","#     #","#  $  #","# $ #.#","##   .#","-######"],"par":21,"tip":""},
+{"rows":["#######","#   . #","#     #","#  # .#","# $ $##","#   @ #","#######"],"par":21,"tip":""},
+{"rows":["########","#+$    #","##   $ #","#      #","## . $ #","#  #.  #","########"],"par":22,"tip":""},
+{"rows":["########","#      #","# $    #","#  $   #","#.$   .#","#  . # #","#   $+##","#######-"],"par":26,"tip":""},
+{"rows":["-#######","-#..$  #","-##$.@ #","##  .  #","# $    #","#   $  #","#      #","########"],"par":27,"tip":""},
+{"rows":["########","#.  $  #","#  $@# #","# . $  #","###.   #","#  .#$ #","# ##   #","########"],"par":30,"tip":""},
+{"rows":["########","# #    #","#..#   #","#. ##  #","#$  $$ #","#     @#","########"],"par":32,"tip":""}],"hrd":[{"rows":["ABGH","ABDF","..DF","EECC","IJCC"],"name":"小试牛刀","par":4,"tip":"把挡路的小兵挪开，曹操就能往下走。"},
+{"rows":["..GH","ABDF","ABDF","EECC","IJCC"],"name":"让一让","par":6,"tip":"曹操要走到最下面中间的出口。先看看他下面是谁挡着。"},
+{"rows":["GH..","ABDF","ABDF","EECC","IJCC"],"name":"兵来将挡","par":10,"tip":"空格很宝贵！先想想怎么把两个空格挪到曹操下面。"},
+{"rows":["GHAB","DFAB","DF..","EECC","IJCC"],"name":"左右开路","par":12,"tip":"一块一块慢慢挪，不着急。"},
+{"rows":["GHAB","DFAB","DFCC","..CC","EEIJ"],"name":"步步为营","par":18,"tip":"关羽横着很占地方，想办法让他让开。"},
+{"rows":["GAB.","HAB.","DCCF","DCCF","EEIJ"],"name":"一路向下","par":25,"tip":"试着先让两边的竖将往上走。"},
+{"rows":["AGBD","AHBD","CC.F","CC.F","EEIJ"],"name":"绕个大圈","par":32,"tip":"走不通就退一步，换一条路试试。"},
+{"rows":["GHCC","ABCC","ABEE","DF.I","DF.J"],"name":"千回百转","par":50,"tip":"这关比较长，可以用撤销慢慢试。"},
+{"rows":["ACCB","ACCB","GHIJ","DEEF","D..F"],"name":"齐头并进","par":85,"tip":"这是经典布局“齐头并进”，大人也要想一阵子哦！"},
+{"rows":["ACCB","ACCB","DEEF","DGHF","I..J"],"name":"横刀立马","par":116,"tip":"这是最有名的“横刀立马”，最少要 116 步（每次移动一格算一步）。挑战一下吧！"}],"match":[{"eq":"1+2=2","tip":"只要动最右边那个数字。","sol":{"eq":"1+2=3","from":[4,"e"],"to":[4,"c"]},"count":1},
+{"eq":"2+3=3","tip":"等号右边的数字能不能变成另一个数？","sol":{"eq":"2+3=5","from":[4,"b"],"to":[4,"f"]},"count":1},
+{"eq":"1+3=6","tip":"中间那个数字变一变。","sol":{"eq":"1+5=6","from":[2,"b"],"to":[2,"f"]},"count":1},
+{"eq":"2-2=6","tip":"2 − 2 等于几？","sol":{"eq":"2-2=0","from":[4,"g"],"to":[4,"b"]},"count":1},
+{"eq":"4-1=6","tip":"运算符号也可以变哦：减号加一根就是加号。","sol":{"eq":"4+1=5","from":[4,"e"],"to":[1,"v"]},"count":1},
+{"eq":"1-7=2","tip":"从一个数字上拿一根，给减号。","sol":{"eq":"1+1=2","from":[2,"a"],"to":[1,"v"]},"count":1},
+{"eq":"7+1=5","tip":"加号拿掉一根就变成减号。","sol":{"eq":"7-1=6","from":[1,"v"],"to":[4,"e"]},"count":1},
+{"eq":"3+4=5","tip":"加号上的竖棍可以挪到数字上。","sol":{"eq":"9-4=5","from":[1,"v"],"to":[0,"f"]},"count":1},
+{"eq":"5+7=2","tip":"试试把加号变成减号。","sol":{"eq":"9-7=2","from":[1,"v"],"to":[0,"b"]},"count":1},
+{"eq":"2+8=6","tip":"两个数字之间换一根。","sol":{"eq":"2+6=8","from":[2,"b"],"to":[4,"b"]},"count":1},
+{"eq":"1+6=8","tip":"一个数字拿走一根，另一个数字加上一根。","sol":{"eq":"1+8=9","from":[4,"e"],"to":[2,"b"]},"count":1},
+{"eq":"1+6=12","tip":"左边两个数都可能要变。","sol":{"eq":"7+5=12","from":[2,"e"],"to":[0,"a"]},"count":1},
+{"eq":"3+6=14","tip":"右边是 14，左边两个数加起来要等于 14。","sol":{"eq":"9+5=14","from":[2,"e"],"to":[0,"f"]},"count":1},
+{"eq":"8-3=3","tip":"这关有好几种移法，找到任意一种就算过关！","sol":{"eq":"0+3=3","from":[0,"g"],"to":[1,"v"]},"count":3}],"line":[{"name":"三角形","nodes":[[50,10],[10,85],[90,85]],"edges":[[0,1],[1,2],[2,0]]},
+{"name":"小方块","nodes":[[15,15],[85,15],[85,85],[15,85]],"edges":[[0,1],[1,2],[2,3],[3,0],[0,2]]},
+{"name":"小房子","nodes":[[50,6],[15,40],[85,40],[85,92],[15,92]],"edges":[[0,1],[0,2],[1,2],[1,4],[2,3],[3,4]]},
+{"name":"蝴蝶结","nodes":[[10,15],[10,85],[50,50],[90,15],[90,85]],"edges":[[0,1],[0,2],[1,2],[2,3],[2,4],[3,4]]},
+{"name":"信封","nodes":[[50,6],[15,36],[85,36],[85,92],[15,92]],"edges":[[0,1],[0,2],[1,2],[1,3],[1,4],[2,3],[2,4],[3,4]]},
+{"name":"五角星","nodes":[[50,8],[90,37],[75,84],[25,84],[10,37]],"edges":[[0,2],[2,4],[4,1],[1,3],[3,0]]},
+{"name":"日字格","nodes":[[15,8],[85,8],[15,50],[85,50],[15,92],[85,92]],"edges":[[0,1],[0,2],[1,3],[2,3],[2,4],[3,5],[4,5]]},
+{"name":"小鱼","nodes":[[8,25],[8,75],[40,50],[66,20],[94,50],[66,80]],"edges":[[0,1],[0,2],[1,2],[2,3],[3,4],[4,5],[5,2],[3,5]]},
+{"name":"小帆船","nodes":[[6,56],[94,56],[76,88],[24,88],[50,56],[50,8]],"edges":[[0,4],[4,1],[1,2],[2,3],[3,0],[4,5],[5,1]]},
+{"name":"魔法星","nodes":[[50,8],[90,37],[75,84],[25,84],[10,37]],"edges":[[0,1],[1,2],[2,3],[3,4],[4,0],[0,2],[2,4],[4,1],[1,3],[3,0]]}]};
+})(typeof window!=='undefined'?window:globalThis);
+/*LEVELS-END*/
+/*UI-START*/
+(function(){
+'use strict';
+var E=window.PZE,ROOMS=window.PZ_ROOMS,ITEMS=window.PZ_ITEMS,CASES=window.PZ_CASES,LV=window.PZ_LEVELS;
+function $(s,r){return (r||document).querySelector(s);}
+function $$(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+var QS=new URLSearchParams(location.search);
+/* ---------------- 存档 ---------------- */
+var KEY='puzzle_v1';
+function defStore(){return {v:1,sound:true,best:{},rooms:{},notes:{},clues:{}};}
+var store;try{if(QS.has('reset'))localStorage.removeItem(KEY);store=JSON.parse(localStorage.getItem(KEY)||'null');}catch(e){store=null;}
+if(!store||store.v!==1)store=defStore();['best','rooms','notes','clues'].forEach(function(k){if(!store[k])store[k]={};});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}}
+/* ---------------- 声音 ---------------- */
+var actx=null;
+function ac(){if(!actx){var C=window.AudioContext||window.webkitAudioContext;if(!C)return null;try{actx=new C();}catch(e){return null;}}if(actx.state==='suspended')actx.resume();return actx;}
+function tone(f,d,type,v,delay){if(!store.sound)return;var c=ac();if(!c)return;var t=c.currentTime+(delay||0),o=c.createOscillator(),g=c.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||0.12,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+d+0.05);}
+var SFX={
+  tap:function(){tone(660,0.07,'triangle',0.07);},
+  step:function(){tone(420,0.05,'triangle',0.05);},
+  push:function(){tone(200,0.09,'square',0.05);},
+  pick:function(){tone(520,0.08,'sine',0.1);tone(780,0.08,'sine',0.08,0.06);},
+  ok:function(){tone(660,0.1,'sine',0.12);tone(880,0.14,'sine',0.12,0.09);},
+  bad:function(){tone(240,0.16,'sawtooth',0.06);tone(190,0.2,'sawtooth',0.05,0.12);},
+  unlock:function(){[523,659,784,1047].forEach(function(f,i){tone(f,0.12,'triangle',0.1,i*0.07);});},
+  hint:function(){tone(988,0.08,'sine',0.08);tone(1319,0.12,'sine',0.07,0.08);},
+  win:function(){[523,659,784,659,784,1047].forEach(function(f,i){tone(f,0.16,'triangle',0.12,i*0.11);});}
+};
+/* ---------------- 小工具 ---------------- */
+var STAR='M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.5L12 17.2 6.1 20.4l1.3-6.5L2.5 9.3l6.6-.8z';
+function starSvg(lit,cls){return '<svg viewBox="0 0 24 24"'+(cls?' class="'+cls+'"':'')+'><path d="'+STAR+'" fill="'+(lit?'#ffc23c':'#e8dff0')+'" stroke="'+(lit?'#e59f00':'#d6cbe2')+'" stroke-width="1.5" stroke-linejoin="round"/></svg>';}
+function starsHtml(n){var s='<span class="stars">';for(var i=0;i<3;i++)s+=starSvg(i<n,i<n?'lit':'');return s+'</span>';}
+var toastT=null;function toast(t,ms){var el=$('#toast');el.textContent=t;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){el.classList.remove('show');},ms||2200);}
+function confetti(){var cs=['#ff6fa5','#8e6bff','#22b88a','#ffc23c','#4d9bff'];for(var i=0;i<36;i++){var d=document.createElement('div');d.className='confetti';d.style.left=Math.random()*100+'vw';d.style.background=cs[i%5];d.style.animationDuration=(1.6+Math.random()*1.4)+'s';d.style.animationDelay=(Math.random()*0.4)+'s';document.body.appendChild(d);(function(x){setTimeout(function(){x.remove();},3600);})(d);}}
+function shake(el){if(!el)return;el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
+/* ---------------- 关卡信息 ---------------- */
+var KINDS={
+  room:{name:'密室逃脱',icon:'🔑',n:ROOMS.length,intro:'每个房间都有一个小故事。点房间里的东西仔细看看，把物品拿起来、组合起来，解开密码锁逃出去！'},
+  case:{name:'侦探推理',icon:'🔍',n:CASES.length,intro:'读故事、听每个人说的话、翻开线索卡，在笔记表里打 ✓ 和 ✗，最后指认是谁，并说出理由。'},
+  soko:{name:'推箱子',icon:'📦',n:LV.soko.length,pz:1,desc:'把箱子都推到星星上',intro:'把所有箱子推到黄色星星上。箱子只能推、不能拉，推进墙角就出不来了哦！'},
+  hrd:{name:'华容道',icon:'🏯',n:LV.hrd.length,pz:1,desc:'帮曹操从出口逃走',intro:'中国传统益智游戏：挪动木块，让红色的“曹操”从最下面中间的出口出去。'},
+  match:{name:'移火柴',icon:'🔥',n:LV.match.length,pz:1,desc:'移一根火柴让等式成立',intro:'每关只能移动一根火柴，让算式变成正确的等式。数字和加减号都可以变！'},
+  line:{name:'一笔画',icon:'✏️',n:LV.line.length,pz:1,desc:'一笔画完所有的线',intro:'笔不离开纸、每条线只走一次，把整个图形画完。找到正确的起点是关键！'}
+};
+var PZKINDS=['soko','hrd','match','line'];
+function bestOf(k,i){return store.best[k+':'+i]||0;}
+function unlocked(k,i){return QS.has('unlock')||i===0||bestOf(k,i-1)>0;}
+function sumStars(k){var s=0;for(var i=0;i<KINDS[k].n;i++)s+=bestOf(k,i);return s;}
+function doneCount(k){var s=0;for(var i=0;i<KINDS[k].n;i++)if(bestOf(k,i))s++;return s;}
+function record(k,i,stars){var key=k+':'+i;if(!store.best[key]||stars>store.best[key])store.best[key]=stars;save();}
+/* ---------------- 页面切换 ---------------- */
+var nav={screen:'home',kind:null,idx:0};
+function show(id){$$('.screen').forEach(function(s){s.classList.toggle('active',s.id==='scr-'+id);});nav.screen=id;window.scrollTo(0,0);}
+function paintMute(){$$('[data-act="mute"]').forEach(function(b){b.textContent=store.sound?'🔊':'🔇';});}
+var OWL=['我是猫头鹰博士！每个谜题都藏着线索，慢慢读、仔细想，你一定能解开。','小窍门：做题前先问问自己：“题目告诉了我什么？要我找什么？”','卡住了不要急，点「💡 提示」，我会一点一点帮你。','侦探的秘诀：每一个结论都要有线索做证据！','今天想先挑战哪一个？'];
+function renderHome(){var tot=0,max=0;Object.keys(KINDS).forEach(function(k){tot+=sumStars(k);max+=KINDS[k].n*3;});
+  $('#homeStars').innerHTML=starSvg(true)+tot+' / '+max;
+  $('#prog-room').textContent='已逃出 '+doneCount('room')+' / '+ROOMS.length+' 间';
+  $('#prog-case').textContent='已破案 '+doneCount('case')+' / '+CASES.length+' 个';
+  var d=0,n=0;PZKINDS.forEach(function(k){d+=doneCount(k);n+=KINDS[k].n;});$('#prog-pz').textContent='已过关 '+d+' / '+n+' 关';
+  $('#owlSay').textContent=OWL[(tot+d)%OWL.length];
+  paintMute();show('home');}
+function renderHub(){var h='';PZKINDS.forEach(function(k){var K=KINDS[k];h+='<button class="big" data-act="list" data-kind="'+k+'"><div class="bi">'+K.icon+'</div><div><b>'+K.name+'</b><small>'+K.desc+' · '+K.n+' 关</small></div><div class="r"><div class="tag mint">'+doneCount(k)+' / '+K.n+'</div><div style="margin-top:4px;font-weight:900;font-size:14px">'+starSvg(true).replace('<svg','<svg style="width:16px;height:16px;vertical-align:-3px"')+' '+sumStars(k)+'</div></div></button>';});
+  $('#hubBody').innerHTML=h;paintMute();show('hub');}
+function renderList(k){nav.kind=k;var K=KINDS[k],h='';
+  $('#listTitle').innerHTML=K.icon+' '+K.name+'<small>'+doneCount(k)+' / '+K.n+' 已完成</small>';$('#listStars').innerHTML=starSvg(true)+sumStars(k)+' / '+K.n*3;$('#listIntro').textContent=K.intro;
+  var firstOpen=-1;for(var i=0;i<K.n;i++)if(unlocked(k,i)&&!bestOf(k,i)){firstOpen=i;break;}
+  if(k==='room'||k==='case'){h='<div class="big-grid">';var arr=k==='room'?ROOMS:CASES;
+    arr.forEach(function(x,i){var lock=!unlocked(k,i),b=bestOf(k,i);
+      h+='<button class="big'+(lock?' locked':'')+'" data-act="play" data-kind="'+k+'" data-i="'+i+'"><div class="bi">'+(lock?'🔒':x.emoji)+'</div><div style="min-width:0"><b>'+(i+1)+'. '+esc(x.title)+'</b><small>'+(k==='room'?esc(x.sub):'<span class="tag '+(x.level==='入门'?'mint':x.level==='进阶'?'sun':'pink')+'">'+x.level+'</span> '+x.suspects.length+' 个嫌疑人')+'</small>'+
+        (k==='room'&&store.rooms[x.id]&&!b?'<small style="color:#d63e7a;font-weight:800">● 上次玩到一半</small>':'')+'</div><div class="r">'+(lock?'':starsHtml(b))+'</div></button>';});
+    h+='</div>';}
+  else{h='<div class="lv-grid">';for(var j=0;j<K.n;j++){var lk=!unlocked(k,j);h+='<button class="lv'+(lk?' locked':'')+(j===firstOpen?' cur':'')+'" data-act="play" data-kind="'+k+'" data-i="'+j+'">'+(lk?'🔒':(j+1))+(lk?'':starsHtml(bestOf(k,j)))+'</button>';}h+='</div>';}
+  $('#listBody').innerHTML=h;paintMute();show('list');}
+function play(k,i,force){if(!unlocked(k,i)){SFX.bad();toast('先完成前一关，才能玩这一关哦！');return;}nav.kind=k;nav.idx=i;closeSheet(true);
+  ({room:startRoom,case:startCase,soko:startSoko,hrd:startHrd,match:startMatch,line:startLine})[k](i,force);paintMute();}
+/* ---------------- 弹窗 ---------------- */
+var sheetLocked=false,sheetOnClose=null;
+function openSheet(html,opt){opt=opt||{};$('#sheet').innerHTML=html;$('#mask').classList.add('show');sheetLocked=!!opt.locked;sheetOnClose=opt.onClose||null;$('#sheet').scrollTop=0;}
+function closeSheet(silent){var m=$('#mask');if(!m.classList.contains('show'))return;m.classList.remove('show');$('#sheet').innerHTML='';var f=sheetOnClose;sheetOnClose=null;sheetLocked=false;if(f&&!silent)f();}
+function sheetHead(t){return '<div class="sheet-h"><h3>'+t+'</h3><button class="xbtn" data-act="close" aria-label="关闭">✕</button></div>';}
+/* 通用提示面板：H = {texts:[], max, reveal(i)->text, repeat} */
+function hintSheet(H){var h=sheetHead('💡 提示');h+='<div class="hint-list">';
+  if(!H.texts.length)h+='<div class="hint-item">需要帮忙吗？提示会一点一点给，先看第一条，想一想再看下一条。</div>';
+  H.texts.forEach(function(t,i){h+='<div class="hint-item"><b>提示 '+(i+1)+'：</b>'+esc(t)+'</div>';});h+='</div>';
+  var more=H.texts.length<H.max||H.repeat;
+  h+='<div class="actions">'+(more?'<button class="btn sun" data-act="hintMore">'+(H.texts.length===0?'给我一点提示':H.texts.length<H.max?'再多一点提示':'再看下一步')+'</button>':'')+'<button class="btn ghost" data-act="close">我自己想想</button></div>';
+  h+='<div class="hint-cost">用了提示，这一关的星星会少一点。没关系，学会最重要！</div>';
+  openSheet(h);curHint=H;}
+var curHint=null;
+function hintMore(){var H=curHint;if(!H)return;var i=Math.min(H.texts.length,H.max-1);var t=H.reveal(H.texts.length<H.max?H.texts.length:H.max-1);
+  if(H.texts.length<H.max)H.texts.push(t);else H.texts[H.max-1]=t;SFX.hint();hintSheet(H);}
+/* 过关弹窗 */
+function winSheet(o){SFX.win();confetti();record(nav.kind,nav.idx,o.stars);
+  var h='<div class="win"><div style="font-size:48px">'+(o.icon||'🎉')+'</div><div class="wt">'+o.title+'</div><div class="bigstars">'+[0,1,2].map(function(i){return starSvg(i<o.stars);}).join('')+'</div>';
+  h+='<div class="ws">'+o.stat+'</div>';
+  if(o.ending)h+='<div class="ending">'+esc(o.ending)+'</div>';
+  if(o.explain&&o.explain.length)h+='<div class="explain"><h4>🦉 解谜思路</h4><ol>'+o.explain.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol></div>';
+  var hasNext=nav.idx+1<KINDS[nav.kind].n;
+  h+='<div class="actions">'+(hasNext?'<button class="btn primary" data-act="next">下一关 ➜</button>':'')+'<button class="btn ghost" data-act="retry">再玩一次</button><button class="btn ghost" data-act="tolist">返回列表</button></div>';
+  if(!hasNext)h+='<div class="hint-cost">🏆 这一类的关卡全部完成啦，太厉害了！</div>';
+  h+='</div>';openSheet(h,{locked:true});}
+function statLine(parts){return parts.filter(Boolean).join(' · ');}
+
+/* ================= 密室逃脱 ================= */
+var RP=null;
+function startRoom(i,force){var room=ROOMS[i],saved=store.rooms[room.id];
+  RP={room:room,i:i,st:E.room.init(),hints:0,stage:{},sel:null,hl:null,msg:'点房间里的东西，仔细看看吧！',started:Date.now()};
+  if(saved&&!force){RP.st=saved.st;RP.hints=saved.hints||0;RP.stage=saved.stage||{};RP.msg='欢迎回来！接着上次的进度继续。';}
+  $('#roomTitle').innerHTML=room.emoji+' '+esc(room.title)+'<small>第 '+(i+1)+' 间密室</small>';
+  show('room');renderRoom();if(!saved||force)storySheet();}
+function roomSave(){store.rooms[RP.room.id]={st:RP.st,hints:RP.hints,stage:RP.stage};save();}
+function storySheet(){var r=RP.room;openSheet(sheetHead(r.emoji+' '+esc(r.title))+'<div class="story">'+r.story.map(function(p){return '<p class="say">'+esc(p)+'</p>';}).join('')+'</div><div class="note">玩法：点房间里的东西可以查看；看到「拿起」就把物品放进物品栏；先点物品栏里的物品选中它，再点房间里的东西就能“使用”；先后点两个物品可以“组合”。</div><div class="actions"><button class="btn primary" data-act="close">开始探险！</button></div>');}
+function renderRoom(){var r=RP.room,st=RP.st,s=r.art(st.flags);
+  r.objects.forEach(function(o){var b=o.box;s+='<rect class="hit" data-obj="'+o.id+'" x="'+b[0]+'" y="'+b[1]+'" width="'+b[2]+'" height="'+b[3]+'" fill="transparent"><title>'+esc(o.name)+'</title></rect>';});
+  if(RP.hl){var o=E.room.obj(r,RP.hl);if(o){var b=o.box;s+='<rect class="hl" x="'+(b[0]-3)+'" y="'+(b[1]-3)+'" width="'+(b[2]+6)+'" height="'+(b[3]+6)+'" rx="10"/>';}}
+  $('#scene').innerHTML=s;$('#roomMsg').innerHTML=esc(RP.msg);
+  var h='',n=Math.max(5,st.inv.length);for(var i=0;i<n;i++){var it=st.inv[i];if(!it){h+='<div class="slot empty"></div>';continue;}var I=ITEMS[it];
+    h+='<button class="slot'+(RP.sel===it?' sel':'')+(I.glow?' glow':'')+'" data-act="item" data-item="'+it+'"><span class="ic">'+I.icon+'</span><span class="nm">'+esc(I.name)+'</span></button>';}
+  $('#inv').innerHTML=h;$('#invTip').textContent=RP.sel?'已选中「'+ITEMS[RP.sel].name+'」':'点物品可以选中它';}
+function roomMsg(t){RP.msg=t;$('#roomMsg').innerHTML=esc(t);}
+function roomAfter(res,objId){ // 成功的动作之后
+  if(RP.hl&&E.room.hint(RP.room,RP.st)===null)RP.hl=null;
+  var h=E.room.hint(RP.room,RP.st);if(RP.hl&&(!h||h.h.obj!==RP.hl))RP.hl=null;
+  roomSave();renderRoom();if(RP.st.done){setTimeout(roomWin,700);}}
+function roomTapObj(id){var r=RP.room,st=RP.st;if(st.done)return;
+  if(RP.sel){var it=RP.sel,res=E.room.use(r,st,id,it);if(res.ok){SFX.unlock();RP.sel=null;roomMsg(res.text);toast(res.text,2600);roomAfter(res,id);}else{SFX.bad();roomMsg(res.text);toast(res.text);shake($('.scene-box'));}return;}
+  SFX.tap();var lk=E.room.look(r,st,id);if(lk.view&&lk.view.set)roomSave();roomInspect(id);}
+var LK=null;
+function roomInspect(id,banner,bad){var r=RP.room,o=E.room.obj(r,id),v=E.room.view(r,RP.st,id);if(!v){closeSheet();return;}
+  var h=sheetHead(esc(o.name));if(banner)h+='<div class="banner'+(bad?' bad':'')+'">'+esc(banner)+'</div>';
+  h+='<p class="say">'+esc(v.text)+'</p>';if(v.note)h+='<div class="note">'+esc(v.note)+'</div>';
+  if(v.use&&!v.take&&!v.lock)h+='<div class="gnote">💡 要在这里用东西：先关掉这个窗口，在物品栏选中物品，再点「'+esc(o.name)+'」。</div>';
+  if(v.lock){var L=v.lock;if(!LK||LK.id!==id||LK.kind!==L.kind||LK.ans!==L.answer)LK={id:id,kind:L.kind,len:L.len||L.opts.length,val:'',dial:L.opts&&L.kind==='dial'?L.opts.map(function(){return 0;}):null,ans:L.answer};h+=lockHtml(L);}
+  else LK=null;
+  h+='<div class="actions">'+(v.take?'<button class="btn mint" data-act="take" data-obj="'+id+'">✋ 拿起</button>':'')+'<button class="btn ghost" data-act="close">'+(v.take?'先不拿':'好的')+'</button></div>';
+  openSheet(h);RP.inspect=id;}
+function lockHtml(L){var h='<div class="lock" id="lockBox"><div class="lock-p">🔒 '+esc(L.prompt||'输入密码')+'</div>';
+  if(L.kind==='num'||L.kind==='alpha'){h+='<div class="codebox" id="codebox">'+codeCells()+'</div>';
+    if(L.kind==='num'){h+='<div class="pad">';['1','2','3','4','5','6','7','8','9',L.dot?'.':'','0','⌫'].forEach(function(k){h+=k===''?'<span></span>':'<button data-act="'+(k==='⌫'?'bs':'key')+'" data-k="'+k+'">'+k+'</button>';});h+='</div>';}
+    else{h+='<div class="kb">';'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(function(k){h+='<button data-act="key" data-k="'+k+'">'+k+'</button>';});h+='<button data-act="bs" data-k="⌫">⌫</button></div>';}
+    h+='<button class="btn purple ok" data-act="lockok">确定</button>';}
+  else if(L.kind==='dial'){h+='<div class="dials">';L.opts.forEach(function(o,i){h+='<div class="dial"><button data-act="dial" data-i="'+i+'" data-d="-1" aria-label="上一个">▲</button><div class="ch" id="dial'+i+'">'+o[LK.dial[i]]+'</div><button data-act="dial" data-i="'+i+'" data-d="1" aria-label="下一个">▼</button></div>';});h+='</div><button class="btn purple ok" data-act="lockok">确定</button>';}
+  else if(L.kind==='choice'){h+='<div class="choices">';L.opts.forEach(function(o){h+='<button data-act="choice" data-v="'+o.v+'" style="background:'+o.c+'" aria-label="盒子"></button>';});h+='</div>';}
+  return h+'</div>';}
+function codeCells(){var s='';for(var i=0;i<LK.len;i++){var c=LK.val[i]||'';s+='<span class="'+(c?'f':'')+'">'+c+'</span>';}return s;}
+function lockKey(k){if(!LK)return;SFX.tap();if(k==='⌫')LK.val=LK.val.slice(0,-1);else if(LK.val.length<LK.len)LK.val+=k;var cb=$('#codebox');if(cb)cb.innerHTML=codeCells();}
+function lockDial(i,d){var v=E.room.view(RP.room,RP.st,LK.id),o=v.lock.opts[i];LK.dial[i]=(LK.dial[i]+d+o.length)%o.length;$('#dial'+i).textContent=o[LK.dial[i]];SFX.tap();}
+function lockSubmit(val){var id=LK.id,v=E.room.view(RP.room,RP.st,id);if(val===undefined)val=v.lock.kind==='dial'?LK.dial.map(function(x,i){return v.lock.opts[i][x];}).join(''):LK.val;
+  if((v.lock.kind==='num'||v.lock.kind==='alpha')&&val.length<1){toast('先输入密码哦');return;}
+  var res=E.room.code(RP.room,RP.st,id,val);
+  if(res.ok){SFX.unlock();LK=null;roomMsg(res.text);roomSave();if(RP.st.done){closeSheet(true);roomAfter(res,id);toast(res.text,2600);return;}roomAfter(res,id);roomInspect(id,res.text);}
+  else{SFX.bad();if(LK.kind!=='dial')LK.val='';roomInspect(id,res.text,true);shake($('#lockBox'));}}
+function roomTake(id){var res=E.room.take(RP.room,RP.st,id);if(!res.ok)return;SFX.pick();roomMsg(res.text);roomAfter(res,id);roomInspect(id,res.text);}
+function roomTapItem(it){var st=RP.st;if(st.done)return;
+  if(RP.sel===it){RP.sel=null;SFX.tap();roomMsg('「'+ITEMS[it].name+'」：'+ITEMS[it].desc);renderRoom();return;}
+  if(RP.sel){var a=RP.sel,res=E.room.combine(RP.room,st,a,it);RP.sel=null;if(res.ok){SFX.unlock();roomMsg(res.text);toast(res.text);roomAfter(res);}else{SFX.bad();roomMsg(res.text);toast(res.text);renderRoom();}return;}
+  RP.sel=it;SFX.pick();roomMsg('已选中「'+ITEMS[it].name+'」：'+ITEMS[it].desc+' 点房间里的东西来使用它，或者再点一个物品来组合。（再点一次可以放下）');renderRoom();}
+function roomHint(){var hh=E.room.hint(RP.room,RP.st);if(!hh){toast('你已经快成功啦！');return;}var key=hh.idx;var texts=(RP.stage[key]||[]).slice();
+  hintSheet({texts:texts,max:hh.h.tiers.length,reveal:function(i){RP.hints++;var arr=RP.stage[key]=RP.stage[key]||[];arr.push(hh.h.tiers[i]);if(i>=1&&hh.h.obj){RP.hl=hh.h.obj;}roomSave();renderRoom();return hh.h.tiers[i];}});}
+function roomWin(){var r=RP.room,stars=RP.hints<=0?3:RP.hints<=3?2:1;delete store.rooms[r.id];save();
+  winSheet({icon:'🚪',title:'成功逃出「'+r.title+'」！',stars:stars,ending:RP.msg,stat:statLine([RP.hints?'用了 '+RP.hints+' 次提示':'一次提示也没用，太棒了！']),explain:r.explain});}
+
+/* ================= 侦探推理 ================= */
+var CP=null;
+function startCase(i){var c=CASES[i];var opened=store.clues[c.id]||{};var notes=store.notes[c.id]||{cells:{},out:{}};
+  CP={c:c,i:i,wrongs:0,hints:0,hintTexts:[],picked:null,opened:opened,notes:notes,tab:'story'};
+  $('#caseTitle').innerHTML=c.emoji+' '+esc(c.title)+'<small>案件 '+(i+1)+' · '+c.level+'</small>';show('case');renderCase();setTab('story');}
+function caseSave(){store.clues[CP.c.id]=CP.opened;store.notes[CP.c.id]=CP.notes;save();}
+function rowLabels(){var c=CP.c;return c.suspects.map(function(s){return c.grid.rows==='suspects'?s.av+' '+s.name:c.grid.rows.fmt.replace('{n}',s.name);});}
+function renderCase(){var c=CP.c,h='';
+  h='<h3>📖 案件故事</h3>'+c.story.map(function(p){return '<p>'+esc(p)+'</p>';}).join('')+'<h3 style="margin-top:14px">🗣️ 大家说的话</h3>';
+  c.suspects.forEach(function(s){h+='<div class="sus"><div class="av">'+s.av+'</div><div class="sb"><b>'+esc(s.name)+'</b>'+esc(s.say)+'</div></div>';});
+  h+='<div class="actions"><button class="btn purple" data-act="tab" data-tab="clues">去看线索 ➜</button></div>';$('#paneStory').innerHTML=h;
+  renderClues();renderNotes();renderAccuse();}
+function renderClues(){var c=CP.c,n=0,h='<h3>🔎 线索卡 <span class="tag">点卡片翻开</span></h3><div class="clues">';
+  c.clues.forEach(function(k){var op=CP.opened[k.id];if(op)n++;h+='<button class="clue'+(op?' open':'')+'" data-act="clue" data-id="'+k.id+'"><span class="ci">'+(op?k.icon:'❓')+'</span><span><b>'+esc(k.title)+'</b>'+(op?'<span class="ct">'+esc(k.text)+'</span>'+(k.table?tableHtml(k.table):''):'<span class="ct">点我查看</span>')+'</span></button>';});
+  h+='</div><div class="gnote">已经看了 '+n+' / '+c.clues.length+' 张线索卡。</div>'+(n===c.clues.length?'<div class="actions"><button class="btn purple" data-act="tab" data-tab="notes">去做笔记 ➜</button></div>':'');
+  $('#paneClues').innerHTML=h;var dot=$('#caseTabs [data-tab="clues"]');dot.innerHTML='🔎 线索'+(n<c.clues.length?'<span class="dot"></span>':'');}
+function tableHtml(t){return '<table>'+t.map(function(r){return '<tr>'+r.map(function(x){return '<td>'+esc(x)+'</td>';}).join('')+'</tr>';}).join('')+'</table>';}
+function renderNotes(){var c=CP.c,rl=rowLabels(),h='<h3>📝 推理笔记</h3><div class="gnote" style="margin:0 0 6px">点格子：一次 ✓，两次 ✗，三次清空。'+(c.grid.rows==='suspects'?'点名字可以把排除的人划掉。':'')+'</div><div class="grid-wrap"><table class="ngrid"><tr><th></th>';
+  c.grid.cols.forEach(function(x){h+='<th>'+esc(x)+'</th>';});h+='</tr>';
+  rl.forEach(function(lab,r){var out=CP.notes.out[r];h+='<tr><th class="rh'+(out?' out':'')+(c.grid.rows==='suspects'?'':' fmt')+'"><button data-act="rowout" data-r="'+r+'">'+esc(lab)+'</button></th>';
+    c.grid.cols.forEach(function(_,ci){var v=CP.notes.cells[r+','+ci]||'';h+='<td><button data-act="cell" data-r="'+r+'" data-c="'+ci+'" class="'+(v==='y'?'y':v==='n'?'n':'')+'" aria-label="'+esc(lab)+' '+esc(c.grid.cols[ci])+'">'+(v==='y'?'✓':v==='n'?'✗':'')+'</button></td>';});h+='</tr>';});
+  h+='</table></div>'+(c.grid.note?'<div class="gnote">'+esc(c.grid.note)+'</div>':'')+'<div class="actions"><button class="btn ghost" data-act="clearNotes">🧽 清空笔记</button><button class="btn purple" data-act="tab" data-tab="accuse">去指认 ➜</button></div>';
+  $('#paneNotes').innerHTML=h;}
+function reasonOrder(){var n=CP.c.reasons.length,o=[];for(var k=0;k<n;k++)o.push((k+CP.i)%n);return o;}
+function renderAccuse(){var c=CP.c,h='<h3>👉 指认</h3><div class="ask">'+esc(c.ask)+'</div><div class="pick">';
+  c.suspects.forEach(function(s){h+='<button data-act="accuse" data-s="'+s.id+'" class="'+(CP.picked===s.id?'on':'')+'"><span class="av">'+s.av+'</span>'+esc(s.name)+'</button>';});h+='</div>';
+  if(CP.picked===c.culprit){h+='<div class="banner" style="margin-top:14px">对了！就是 '+esc(c.suspects.filter(function(s){return s.id===c.culprit;})[0].name)+'。那么，你是怎么推理出来的？选一个最好的理由：</div><div class="reasons">';
+    reasonOrder().forEach(function(k){h+='<button data-act="reason" data-i="'+k+'">'+esc(c.reasons[k].t)+'</button>';});h+='</div>';}
+  $('#paneAccuse').innerHTML=h;}
+function setTab(t){CP.tab=t;$$('#caseTabs button').forEach(function(b){b.classList.toggle('on',b.dataset.tab===t);});$$('#scr-case .pane').forEach(function(p){p.classList.toggle('on',p.dataset.pane===t);});
+  if(window.innerWidth<900)window.scrollTo(0,0);else{var el=$('#scr-case [data-pane="'+t+'"]');if(el&&t!=='story')el.scrollIntoView({block:'nearest'});}}
+function caseClue(id){CP.opened[id]=1;SFX.pick();caseSave();renderClues();}
+function caseCell(r,c){var k=r+','+c,v=CP.notes.cells[k]||'';CP.notes.cells[k]=v===''?'y':v==='y'?'n':'';if(!CP.notes.cells[k])delete CP.notes.cells[k];SFX.tap();caseSave();renderNotes();}
+function caseAccuse(sid){var c=CP.c;if(CP.picked===c.culprit&&sid===c.culprit)return;
+  var seen=c.clues.filter(function(k){return CP.opened[k.id];}).length;if(seen<c.clues.length){SFX.bad();toast('先把所有线索卡都翻开看看吧！侦探不能漏掉任何线索。',2600);setTab('clues');return;}
+  if(sid!==c.culprit){CP.wrongs++;SFX.bad();var s=c.suspects.filter(function(x){return x.id===sid;})[0];
+    openSheet(sheetHead('🤔 再想想')+'<div class="sus"><div class="av">'+s.av+'</div><div class="sb"><b>'+esc(s.name)+'</b>'+(c.owner?'这不是我的风筝哦……':'不是我！')+'</div></div><p class="say" style="margin-top:12px">'+esc(c.rebut[sid])+'</p><div class="actions"><button class="btn purple" data-act="close">好，我再想想</button></div>');return;}
+  CP.picked=sid;SFX.ok();renderAccuse();var rb=$('#paneAccuse .reasons');if(rb)rb.scrollIntoView({block:'nearest',behavior:'smooth'});}
+function caseReason(k){var c=CP.c;if(c.reasons[k].ok){caseWin();return;}CP.wrongs++;SFX.bad();
+  openSheet(sheetHead('🤔 理由还不够')+'<p class="say">'+esc(c.reasonBad)+'</p><div class="actions"><button class="btn purple" data-act="close">再选一次</button></div>');}
+function caseHint(){var c=CP.c;hintSheet({texts:CP.hintTexts,max:c.hints.length,reveal:function(i){CP.hints++;return c.hints[i];}});}
+function caseWin(){var c=CP.c,st=Math.max(1,3-CP.wrongs-(CP.hints>0?1:0)-(CP.hints>=3?1:0));
+  winSheet({icon:c.owner?'🪁':'🕵️',title:c.owner?'找到主人啦！':'破案啦！',stars:st,stat:statLine([CP.wrongs?'猜错 '+CP.wrongs+' 次':'一次就答对了！',CP.hints?'用了 '+CP.hints+' 次提示':'没用提示']),ending:c.ending,explain:c.explain});}
+
+/* ================= 推箱子 ================= */
+var SP=null;
+function startSoko(i){var lv=LV.soko[i],L=E.soko.parse(lv.rows);SP={i:i,lv:lv,L:L,st:{p:L.player,b:L.boxes.slice()},hist:[],moves:0,pushes:0,hints:0,hintTexts:[],hl:null,done:false};
+  $('#sokoTitle').innerHTML='📦 推箱子<small>第 '+(i+1)+' 关</small>';$('#sokoTip').textContent=lv.tip||'把所有箱子推到星星上。';show('soko');buildSoko();renderSoko();}
+function sokoSize(){var L=SP.L,aw=Math.min(window.innerWidth-28,680),ah=Math.max(window.innerHeight-(window.innerWidth<700?360:300),200);return Math.max(24,Math.floor(Math.min(aw/L.W,ah/L.H,62)));}
+function buildSoko(){var L=SP.L,cs=sokoSize(),el=$('#soko'),h='';SP.cs=cs;el.style.width=L.W*cs+'px';el.style.height=L.H*cs+'px';
+  // 地板：从玩家出发能到的格子 + 箱子/目标所在格
+  for(var i=0;i<L.cells.length;i++){var x=i%L.W,y=(i/L.W)|0,c=L.cells[i];if(c==='-')continue;
+    if(c==='#'){h+='<div class="c wall" style="left:'+(x*cs+1)+'px;top:'+(y*cs+1)+'px;width:'+(cs-2)+'px;height:'+(cs-2)+'px"></div>';continue;}
+    h+='<div class="c floor'+(L.goals.indexOf(i)>=0?' goal':'')+'" data-cell="'+i+'" style="left:'+(x*cs+1)+'px;top:'+(y*cs+1)+'px;width:'+(cs-2)+'px;height:'+(cs-2)+'px"></div>';}
+  SP.st.b.forEach(function(_,k){h+='<div class="c box" id="bx'+k+'" style="width:'+(cs-6)+'px;height:'+(cs-6)+'px"></div>';});
+  h+='<div class="c pl" id="pl" style="width:'+cs+'px;height:'+cs+'px;font-size:'+Math.round(cs*0.74)+'px">🐼</div><div class="arrow" id="sArrow" style="display:none"></div><div class="spot" id="sSpot" style="display:none"></div>';
+  el.innerHTML=h;}
+function sokoXY(i){return [i%SP.L.W,(i/SP.L.W)|0];}
+function renderSoko(){var cs=SP.cs,L=SP.L;SP.st.b.forEach(function(b,k){var p=sokoXY(b),e=$('#bx'+k);e.style.left=(p[0]*cs+3)+'px';e.style.top=(p[1]*cs+3)+'px';e.classList.toggle('on',L.goals.indexOf(b)>=0);e.classList.toggle('hl',!!SP.hl&&SP.hl.box===k);});
+  var p=sokoXY(SP.st.p),pl=$('#pl');pl.style.left=p[0]*cs+'px';pl.style.top=p[1]*cs+'px';
+  var ar=$('#sArrow'),sp=$('#sSpot');
+  if(SP.hl&&SP.hl.dir){var bp=sokoXY(SP.st.b[SP.hl.box]),v={U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]}[SP.hl.dir];ar.style.display='flex';ar.style.width=ar.style.height=cs+'px';ar.style.fontSize=Math.round(cs*0.7)+'px';ar.style.left=(bp[0]+v[0])*cs+'px';ar.style.top=(bp[1]+v[1])*cs+'px';ar.textContent={U:'⬆',D:'⬇',L:'⬅',R:'➡'}[SP.hl.dir];
+    var fp=sokoXY(SP.hl.from);sp.style.display='block';sp.style.left=fp[0]*cs+2+'px';sp.style.top=fp[1]*cs+2+'px';sp.style.width=sp.style.height=(cs-4)+'px';}else{ar.style.display='none';sp.style.display='none';}
+  $('#sokoMoves').textContent='步数 '+SP.moves+' · 推了 '+SP.pushes+' 下';$('#sokoPar').textContent='最少 '+SP.lv.par+' 步';}
+function sokoDo(d,quiet){if(SP.done)return false;var n=E.soko.step(SP.L,SP.st,d);if(!n){if(!quiet){SFX.bad();shake($('#soko'));}return false;}
+  SP.hist.push({p:SP.st.p,b:SP.st.b.slice(),m:SP.moves,u:SP.pushes});SP.st={p:n.p,b:n.b};SP.moves++;if(n.push){SP.pushes++;SFX.push();SP.hl=null;}else if(!quiet)SFX.step();
+  renderSoko();if(E.soko.solved(SP.L,SP.st)){SP.done=true;setTimeout(sokoWin,350);}return true;}
+var walkTimer=null;
+function sokoTap(cell){if(SP.done)return;var L=SP.L,st=SP.st,W=L.W,dd={U:-W,D:W,L:-1,R:1};
+  for(var d in dd){if(st.p+dd[d]===cell){sokoDo(d);return;}}
+  var path=E.soko.walk(L,st,cell);if(path===null){if(st.b.indexOf(cell)>=0)toast('走到箱子旁边，再朝它的方向走，就能推它。');return;}
+  var k=0;clearInterval(walkTimer);walkTimer=setInterval(function(){if(k>=path.length||SP.done){clearInterval(walkTimer);return;}sokoDo(path[k++],true);SFX.step();},70);}
+function sokoUndo(){clearInterval(walkTimer);var h=SP.hist.pop();if(!h){toast('已经是一开始的样子啦');return;}SP.st={p:h.p,b:h.b};SP.moves=h.m;SP.pushes=h.u;SP.hl=null;SP.done=false;SFX.tap();renderSoko();}
+function sokoRestart(){clearInterval(walkTimer);var L=SP.L;SP.st={p:L.player,b:L.boxes.slice()};SP.hist=[];SP.moves=0;SP.pushes=0;SP.hl=null;SP.done=false;SFX.tap();renderSoko();}
+function sokoHint(){hintSheet({texts:SP.hintTexts,max:3,repeat:true,reveal:function(i){SP.hints++;
+  if(i===0)return (SP.lv.tip||'')+' 推之前先想好：每个箱子要去哪颗星星？哪些位置一推进去就再也拉不出来（比如墙角）？';
+  var r=E.soko.solve(SP.L,SP.st);if(r===null){SP.hl=null;renderSoko();return '现在这样已经推不出来了（有箱子卡住了）。点「撤销」退回几步，或者点「重来」。';}
+  if(r.limit){return '先试着把离星星最近的箱子推过去。';}
+  if(i===1){SP.hl={box:r.box};renderSoko();return '先推闪烁的这个箱子。想一想，要站在它的哪一边推？';}
+  SP.hl={box:r.box,dir:r.dir,from:r.from};renderSoko();return '走到虚线框的位置，朝箭头方向推一下这个箱子。';}});}
+function sokoWin(){var st=E.soko.stars(SP.moves,SP.lv.par,SP.hints);
+  winSheet({icon:'📦',title:'第 '+(SP.i+1)+' 关 过关！',stars:st,stat:statLine(['用了 '+SP.moves+' 步（最少 '+SP.lv.par+' 步）',SP.hints?'提示 '+SP.hints+' 次':'']),explain:['推箱子要“先想后推”：箱子只能推、不能拉，推进墙角或者贴着墙推到没有星星的地方，就再也推不回来了。','这一关最少 '+SP.lv.par+' 步就能完成'+(SP.moves<=SP.lv.par?'，你找到了最短的走法，真厉害！':'。想挑战更少的步数，可以再玩一次。')]});}
+
+/* ================= 华容道 ================= */
+var HP=null;
+function startHrd(i){var lv=LV.hrd[i];HP={i:i,lv:lv,ps:E.hrd.parse(lv.rows),hist:[],moves:0,hints:0,hintTexts:[],sel:null,hl:null,done:false};
+  $('#hrdTitle').innerHTML='🏯 华容道<small>第 '+(i+1)+' 关 · '+esc(lv.name)+'</small>';$('#hrdTip').textContent=lv.tip;show('hrd');renderHrd();}
+function hrdSize(){var aw=Math.min(window.innerWidth-44,520),ah=Math.max(window.innerHeight-(window.innerWidth<700?340:280),260);return Math.max(52,Math.floor(Math.min(aw/4,ah/5,96)));}
+function pieceType(p){return p.id==='C'?'C':p.w===2?'H':p.h===2?'V':'S';}
+var PE={C:'🐉',E:'🐴',A:'🛡️',B:'🗡️',D:'🏹',F:'⚔️'};
+function renderHrd(){var cs=hrdSize(),el=$('#hrd'),pad=8,h='';HP.cs=cs;el.style.width=cs*4+pad*2+'px';el.style.height=cs*5+pad*2+'px';
+  h+='<div class="exit" style="left:'+(pad+cs)+'px;width:'+(cs*2)+'px;top:'+(cs*5+pad*2-2)+'px">出 口</div>';
+  HP.ps.forEach(function(p,k){var t=pieceType(p),nm=E.hrd.NAMES[p.id];h+='<div class="pc '+t+(HP.sel===k?' sel':'')+(HP.hl&&HP.hl.k===k?' hl':'')+'" data-k="'+k+'" style="left:'+(pad+p.x*cs+3)+'px;top:'+(pad+p.y*cs+3)+'px;width:'+(p.w*cs-6)+'px;height:'+(p.h*cs-6)+'px;font-size:'+Math.round(cs*(t==='C'?0.3:0.24))+'px">'+(t==='S'?'<span class="e">🙂</span>':'<span class="e">'+(PE[p.id]||'')+'</span>')+'<span>'+nm+'</span></div>';});
+  // 箭头
+  var arrows=[];if(HP.sel!==null&&!HP.done){['U','D','L','R'].forEach(function(d){if(E.hrd.canMove(HP.ps,HP.sel,d))arrows.push([HP.sel,d,false]);});}
+  if(HP.hl&&HP.hl.d&&!arrows.some(function(a){return a[0]===HP.hl.k&&a[1]===HP.hl.d;}))arrows.push([HP.hl.k,HP.hl.d,true]);
+  arrows.forEach(function(a){var p=HP.ps[a[0]],cx=pad+(p.x+p.w/2)*cs,cy=pad+(p.y+p.h/2)*cs,o={U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]}[a[1]];
+    var x=cx+o[0]*(p.w*cs/2-10)-23,y=cy+o[1]*(p.h*cs/2-10)-23;var isH=HP.hl&&HP.hl.k===a[0]&&HP.hl.d===a[1];
+    h+='<button class="arr'+(isH?' hint':'')+'" data-k="'+a[0]+'" data-dir="'+a[1]+'" style="left:'+x+'px;top:'+y+'px" aria-label="移动">'+{U:'⬆',D:'⬇',L:'⬅',R:'➡'}[a[1]]+'</button>';});
+  el.innerHTML=h;$('#hrdMoves').textContent='步数 '+HP.moves;$('#hrdPar').textContent='最少 '+HP.lv.par+' 步';}
+function hrdMove(k,d){if(HP.done)return;if(!E.hrd.canMove(HP.ps,k,d)){SFX.bad();return;}HP.hist.push(HP.ps);HP.ps=E.hrd.move(HP.ps,k,d);HP.moves++;SFX.push();
+  if(HP.hl&&!(HP.hl.k===k&&HP.hl.d===d))HP.hl=null;else HP.hl=null;
+  if(!E.hrd.canMove(HP.ps,k,'U')&&!E.hrd.canMove(HP.ps,k,'D')&&!E.hrd.canMove(HP.ps,k,'L')&&!E.hrd.canMove(HP.ps,k,'R'))HP.sel=null;
+  renderHrd();if(E.hrd.won(HP.ps)){HP.done=true;HP.sel=null;renderHrd();var c=$('#hrd .pc.C');if(c){c.style.top=(parseFloat(c.style.top)+HP.cs*0.6)+'px';}setTimeout(hrdWin,500);}}
+function hrdTapPiece(k){if(HP.done)return;var ds=['U','D','L','R'].filter(function(d){return E.hrd.canMove(HP.ps,k,d);});
+  if(!ds.length){HP.sel=null;SFX.bad();toast(E.hrd.NAMES[HP.ps[k].id]+'现在动不了，四周都被挡住了。');renderHrd();return;}
+  if(ds.length===1){HP.sel=k;hrdMove(k,ds[0]);return;}
+  HP.sel=HP.sel===k?null:k;SFX.tap();renderHrd();}
+function hrdUndo(){var h=HP.hist.pop();if(!h){toast('已经是一开始的样子啦');return;}HP.ps=h;HP.moves--;HP.hl=null;HP.sel=null;HP.done=false;SFX.tap();renderHrd();}
+function hrdRestart(){HP.ps=E.hrd.parse(HP.lv.rows);HP.hist=[];HP.moves=0;HP.hl=null;HP.sel=null;HP.done=false;SFX.tap();renderHrd();}
+function hrdHint(){hintSheet({texts:HP.hintTexts,max:3,repeat:true,reveal:function(i){HP.hints++;if(i===0)return HP.lv.tip+' 记住：空格是最宝贵的，想办法把空格“搬”到曹操要去的地方。';
+  var r=E.hrd.solve(HP.ps);if(!r||r.limit)return '试着先把小兵挪到角落里。';if(r.done)return '曹操已经在出口啦！';
+  var nm=E.hrd.NAMES[HP.ps[r.k].id];if(i===1){HP.hl={k:r.k};HP.sel=null;renderHrd();return '下一步动闪烁的「'+nm+'」。往哪边挪呢？';}
+  HP.hl={k:r.k,d:r.d};HP.sel=null;renderHrd();return '把「'+nm+'」往'+{U:'上',D:'下',L:'左',R:'右'}[r.d]+'挪一格（点粉色的箭头）。还要 '+r.moves+' 步就能过关。';}});}
+function hrdWin(){var st=E.hrd.stars(HP.moves,HP.lv.par,HP.hints);
+  winSheet({icon:'🏯',title:'曹操逃出华容道！',stars:st,stat:statLine(['用了 '+HP.moves+' 步（最少 '+HP.lv.par+' 步）',HP.hints?'提示 '+HP.hints+' 次':'']),explain:['华容道的故事来自《三国演义》：曹操兵败逃到华容道，关羽放了他一条生路。','玩华容道的诀窍：空格是最宝贵的，要想办法把空格移到曹操要走的地方；小兵灵活，可以先让它们让路。','这一关最少 '+HP.lv.par+' 步（每次挪动一格算一步）。']});}
+
+/* ================= 移火柴 ================= */
+var MP=null;
+var SEGR={a:[10,4,36,8],b:[46,10,8,38],c:[46,52,8,38],d:[10,88,36,8],e:[2,52,8,38],f:[2,10,8,38],g:[10,46,36,8],h:[4,46,36,8],v:[18,32,8,36]};
+function startMatch(i){var lv=LV.match[i],chars=lv.eq.split('');MP={i:i,lv:lv,chars:chars,sticks:chars.map(function(c){return E.match.sticksOf(c);}),picked:null,placed:null,hints:0,hintTexts:[],hl:null,done:false};
+  $('#mtTitle').innerHTML='🔥 移火柴<small>第 '+(i+1)+' 关</small>';$('#mtTip').textContent='现在的算式：'+pretty(lv.eq)+'　（不对哦！）';show('match');renderMatch();}
+function pretty(eq){return eq.replace(/-/g,' − ').replace(/\+/g,' + ').replace(/=/g,' = ');}
+function charW(c){return c==='+'||c==='-'||c==='='?44:56;}
+function renderMatch(){var x=6,h='',xs=[];MP.chars.forEach(function(c,k){xs.push(x);var nx=MP.chars[k+1];x+=charW(c)+(/\d/.test(c)&&nx&&/\d/.test(nx)?4:12);});var W=x-6;
+  var svg=$('#mtSvg');svg.setAttribute('viewBox','0 -6 '+W+' 112');svg.classList.toggle('picking',!!MP.picked&&!MP.placed);
+  MP.chars.forEach(function(c,i){var ox=xs[i];
+    if(c==='='){[36,56].forEach(function(y){h+=stickSvg(ox+4,y,36,8,false,'');});return;}
+    var slots=E.match.slotsOf(c);slots.forEach(function(s){var r=SEGR[s],has=MP.sticks[i].indexOf(s)>=0,pk=MP.picked&&MP.picked[0]===i&&MP.picked[1]===s;
+      var hlF=MP.hl&&MP.hl.from&&MP.hl.from[0]===i&&MP.hl.from[1]===s,hlT=MP.hl&&MP.hl.to&&MP.hl.to[0]===i&&MP.hl.to[1]===s;
+      if(has)h+='<g class="st'+(pk?' picked':'')+(hlF?' hl':'')+'" data-i="'+i+'" data-s="'+s+'"'+(pk?' transform="translate(0,-5)"':'')+'>'+stickSvg(ox+r[0],r[1],r[2],r[3],true,'')+'<rect x="'+(ox+r[0]-6)+'" y="'+(r[1]-6)+'" width="'+(r[2]+12)+'" height="'+(r[3]+12)+'" fill="transparent"/></g>';
+      else h+='<rect class="ghost'+(hlT?' hl':'')+'" data-i="'+i+'" data-s="'+s+'" x="'+(ox+r[0]-2)+'" y="'+(r[1]-2)+'" width="'+(r[2]+4)+'" height="'+(r[3]+4)+'" rx="4"/>';});});
+  svg.innerHTML=h;}
+function stickSvg(x,y,w,hh,live){var horiz=w>hh;var head=horiz?'<circle cx="'+(x+4)+'" cy="'+(y+hh/2)+'" r="5" fill="#e8463a"/>':'<circle cx="'+(x+w/2)+'" cy="'+(y+4)+'" r="5" fill="#e8463a"/>';
+  return '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+hh+'" rx="4" fill="'+(live?'#f4d29c':'#e9dcc2')+'" stroke="#c99a55" stroke-width="1.5"/>'+head;}
+function matchTap(t){if(MP.done)return;var g=t.closest('.st'),gh=t.closest('.ghost');
+  if(g){if(MP.placed){SFX.bad();toast('已经移动过一根啦。不对的话，点「放回去」再试。');return;}var i=+g.dataset.i,s=g.dataset.s;
+    if(MP.picked&&MP.picked[0]===i&&MP.picked[1]===s){MP.picked=null;SFX.tap();}else{MP.picked=[i,s];SFX.pick();}renderMatch();return;}
+  if(gh&&MP.picked&&!MP.placed){var j=+gh.dataset.i,ts=gh.dataset.s,f=MP.picked;
+    MP.sticks[f[0]]=MP.sticks[f[0]].filter(function(x){return x!==f[1];});MP.sticks[j]=MP.sticks[j].concat([ts]);MP.placed={from:f,to:[j,ts]};MP.picked=null;renderMatch();
+    var eq=E.match.decode(MP.chars,MP.sticks);
+    if(eq&&E.match.isTrue(eq)){MP.done=true;MP.result=eq;SFX.ok();$('#mtTip').textContent='等式成立啦：'+pretty(eq)+' ✔';setTimeout(matchWin,700);}
+    else{SFX.bad();shake($('.mt-box'));$('#mtTip').textContent=eq?('变成了 '+pretty(eq)+'，等式还不成立哦。点「放回去」再试试。'):'这样摆，有的数字或符号认不出来了。点「放回去」再试试。';}}}
+function matchUndo(){if(!MP.placed){if(MP.picked){MP.picked=null;renderMatch();}return;}var p=MP.placed;MP.sticks[p.to[0]]=MP.sticks[p.to[0]].filter(function(x){return x!==p.to[1];});MP.sticks[p.from[0]]=MP.sticks[p.from[0]].concat([p.from[1]]);MP.placed=null;MP.done=false;SFX.tap();
+  $('#mtTip').textContent='现在的算式：'+pretty(MP.lv.eq)+'　（不对哦！）';renderMatch();}
+function matchHint(){hintSheet({texts:MP.hintTexts,max:3,reveal:function(i){MP.hints++;var s=MP.lv.sol;if(MP.placed&&i>0)matchUndo();
+  if(i===0)return MP.lv.tip+' 小窍门：数一数每个数字用了几根火柴，想想拿走一根、加上一根会变成什么数字。';
+  if(i===1){MP.hl={from:s.from};renderMatch();return '试试拿起闪着粉色边的这根火柴。';}
+  MP.hl={from:s.from,to:s.to};renderMatch();return '把粉色边的火柴，放到发黄光的虚线位置，算式就变成 '+pretty(s.eq)+'。';}});}
+function matchWin(){var st=E.starsByHints(MP.hints),lv=MP.lv;
+  winSheet({icon:'🔥',title:'等式成立！',stars:st,stat:statLine([pretty(lv.eq)+'  ➜  '+pretty(MP.result),MP.hints?'提示 '+MP.hints+' 次':'']),explain:['原来的算式 '+pretty(lv.eq)+' 是错的。','移动一根火柴后变成 '+pretty(MP.result)+'，左右两边相等。'+(lv.count>1?'这一关一共有 '+lv.count+' 种移法，你找到了其中一种！':''),'火柴棒数字的秘密：6、9、0 都用 6 根，2、3、5 都用 5 根；加号拿走竖着的一根就变成减号。']});}
+
+/* ================= 一笔画 ================= */
+var LP=null;
+function startLine(i){var lv=LV.line[i];LP={i:i,lv:lv,path:[],used:lv.edges.map(function(){return false;}),hist:[],hints:0,hintTexts:[],hl:null,done:false};
+  $('#lnTitle').innerHTML='✏️ 一笔画<small>第 '+(i+1)+' 关 · '+esc(lv.name)+'</small>';show('line');renderLine();}
+function renderLine(){var lv=LP.lv,h='',cur=LP.path.length?LP.path[LP.path.length-1]:null;
+  lv.edges.forEach(function(e,k){var a=lv.nodes[e[0]],b=lv.nodes[e[1]];var hl=LP.hl&&LP.hl.edge===k;
+    h+='<line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+b[0]+'" y2="'+b[1]+'" stroke="'+(LP.used[k]?'#ff5d98':hl?'#ffc23c':'#d9d0e6')+'" stroke-width="'+(LP.used[k]?5:hl?5:4)+'" stroke-linecap="round"'+(hl&&!LP.used[k]?' stroke-dasharray="4 3"':'')+'/>';});
+  lv.nodes.forEach(function(p,k){var isCur=k===cur,hl=LP.hl&&LP.hl.nodes&&LP.hl.nodes.indexOf(k)>=0,isStart=LP.path[0]===k;
+    if(hl)h+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="8.5" fill="none" stroke="#ffc23c" stroke-width="2.2" stroke-dasharray="3 2"/>';
+    h+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(isCur?5.5:4.2)+'" fill="'+(isCur?'#ff5d98':isStart?'#ffd0e3':'#fff')+'" stroke="'+(isCur?'#d94a80':'#8e6bff')+'" stroke-width="1.8"/>';
+    h+='<circle class="nd" data-n="'+k+'" cx="'+p[0]+'" cy="'+p[1]+'" r="11" fill="transparent" style="cursor:pointer"/>';});
+  $('#lnSvg').innerHTML=h;var left=LP.used.filter(function(x){return !x;}).length;
+  $('#lnTip').textContent=LP.done?'全部画完啦！':LP.path.length?'还剩 '+left+' 条线没画。':'先点一个点作为起点。';}
+function lineTap(n){if(LP.done)return;var lv=LP.lv;if(!LP.path.length){LP.path.push(n);LP.hist.push(-1);SFX.tap();LP.hl=null;renderLine();return;}
+  var cur=LP.path[LP.path.length-1];if(n===cur)return;
+  var k=-1;lv.edges.forEach(function(e,i){if(k<0&&!LP.used[i]&&((e[0]===cur&&e[1]===n)||(e[1]===cur&&e[0]===n)))k=i;});
+  if(k<0){SFX.bad();var was=lv.edges.some(function(e){return (e[0]===cur&&e[1]===n)||(e[1]===cur&&e[0]===n);});toast(was?'这条线已经画过了，每条线只能画一次哦。':'这两个点之间没有线，要沿着线走。');return;}
+  LP.used[k]=true;LP.path.push(n);LP.hist.push(k);LP.hl=null;SFX.step();renderLine();
+  if(LP.used.every(Boolean)){LP.done=true;SFX.ok();renderLine();setTimeout(lineWin,600);return;}
+  var any=lv.edges.some(function(e,i){return !LP.used[i]&&(e[0]===n||e[1]===n);});if(!any){SFX.bad();$('#lnTip').textContent='走到这里没有路了，可还有线没画完。点「撤销」或「重来」再试试！';}}
+function lineUndo(){var k=LP.hist.pop();if(k===undefined){toast('还没开始画呢');return;}if(k>=0)LP.used[k]=false;LP.path.pop();LP.done=false;LP.hl=null;SFX.tap();renderLine();}
+function lineRestart(){LP.path=[];LP.used=LP.lv.edges.map(function(){return false;});LP.hist=[];LP.hl=null;LP.done=false;SFX.tap();renderLine();}
+function lineHint(){hintSheet({texts:LP.hintTexts,max:3,repeat:true,reveal:function(i){LP.hints++;var lv=LP.lv,odd=E.line.odd(lv);
+  if(i===0)return '数一数每个点连着几条线。连着单数条线（1、3、5 条）的点叫“奇点”：如果有 2 个奇点，就必须从其中一个出发，到另一个结束。';
+  if(i===1){LP.hl={nodes:odd.length?odd:lv.nodes.map(function(_,k){return k;})};renderLine();return odd.length?'这张图有 2 个奇点（黄圈标出来了），从其中一个开始画！':'这张图没有奇点，从哪个点开始都可以，最后会回到起点。';}
+  var cur=LP.path.length?LP.path[LP.path.length-1]:null,nx=E.line.next(lv,LP.used,cur);
+  if(!nx){if(LP.path.length){return '从现在的位置已经画不完了。点「撤销」退几步，或者「重来」。';}return '';}
+  if(cur===null){LP.hl={nodes:[nx.from],edge:nx.edge};renderLine();return '从黄圈的点出发，先画虚线这条。';}
+  LP.hl={nodes:[nx.to],edge:nx.edge};renderLine();return '下一步沿着虚线，走到黄圈的点。';}});}
+function lineWin(){var st=E.starsByHints(LP.hints),odd=E.line.odd(LP.lv);
+  winSheet({icon:'✏️',title:'一笔画成功！',stars:st,stat:statLine(['「'+LP.lv.name+'」一共 '+LP.lv.edges.length+' 条线',LP.hints?'提示 '+LP.hints+' 次':'']),explain:['一笔画的秘密（数学家欧拉发现的）：连着单数条线的点叫“奇点”。','奇点有 0 个：从哪里出发都能一笔画完，而且会回到起点；奇点有 2 个：必须从一个奇点出发，在另一个奇点结束；奇点更多：就画不成一笔了。','这张图有 '+odd.length+' 个奇点'+(odd.length?'，所以要从奇点出发。':'，从哪个点开始都可以。')]});}
+
+/* ================= 事件 ================= */
+document.addEventListener('click',function(ev){var t=ev.target;
+  if(t.id==='mask'){if(!sheetLocked)closeSheet();return;}
+  if(nav.screen==='room'){var ob=t.closest('#scene [data-obj]');if(ob){roomTapObj(ob.getAttribute('data-obj'));return;}}
+  if(t.closest('#mtSvg')){matchTap(t);return;}
+  var nd=t.closest('#lnSvg .nd');if(nd){lineTap(+nd.dataset.n);return;}
+  var dp=t.closest('.dpad [data-dir]');if(dp){sokoDo(dp.dataset.dir);return;}
+  var tb=t.closest('#caseTabs [data-tab]');if(tb){SFX.tap();setTab(tb.dataset.tab);return;}
+  var b=t.closest('[data-act]');if(!b)return;var a=b.dataset.act;
+  switch(a){
+    case 'mute':store.sound=!store.sound;save();paintMute();if(store.sound)SFX.tap();break;
+    case 'home':SFX.tap();closeSheet(true);renderHome();break;
+    case 'hub':SFX.tap();renderHub();break;
+    case 'list':SFX.tap();renderList(b.dataset.kind);break;
+    case 'back':SFX.tap();closeSheet(true);clearInterval(walkTimer);if(nav.screen==='list'){if(KINDS[nav.kind].pz)renderHub();else renderHome();}else renderList(nav.kind);break;
+    case 'play':SFX.tap();play(b.dataset.kind,+b.dataset.i);break;
+    case 'close':SFX.tap();closeSheet();break;
+    case 'hint':SFX.tap();({room:roomHint,case:caseHint,soko:sokoHint,hrd:hrdHint,match:matchHint,line:lineHint})[nav.screen]();break;
+    case 'hintMore':hintMore();break;
+    case 'next':closeSheet(true);play(nav.kind,nav.idx+1);break;
+    case 'retry':closeSheet(true);play(nav.kind,nav.idx,true);break;
+    case 'tolist':closeSheet(true);renderList(nav.kind);break;
+    // 密室
+    case 'item':roomTapItem(b.dataset.item);break;
+    case 'take':roomTake(b.dataset.obj);break;
+    case 'key':lockKey(b.dataset.k);break;
+    case 'bs':lockKey('⌫');break;
+    case 'dial':lockDial(+b.dataset.i,+b.dataset.d);break;
+    case 'lockok':lockSubmit();break;
+    case 'choice':lockSubmit(b.dataset.v);break;
+    case 'story':SFX.tap();storySheet();break;
+    case 'roomReset':SFX.tap();openSheet(sheetHead('🔄 重新开始？')+'<p class="say">房间会回到一开始的样子，物品栏也会清空。</p><div class="actions"><button class="btn primary" data-act="roomResetYes">重新开始</button><button class="btn ghost" data-act="close">不了</button></div>');break;
+    case 'roomResetYes':closeSheet(true);delete store.rooms[RP.room.id];save();startRoom(RP.i,true);break;
+    // 侦探
+    case 'tab':SFX.tap();setTab(b.dataset.tab);break;
+    case 'clue':caseClue(b.dataset.id);break;
+    case 'cell':caseCell(+b.dataset.r,+b.dataset.c);break;
+    case 'rowout':CP.notes.out[b.dataset.r]=!CP.notes.out[b.dataset.r];SFX.tap();caseSave();renderNotes();break;
+    case 'clearNotes':CP.notes={cells:{},out:{}};SFX.tap();caseSave();renderNotes();break;
+    case 'accuse':caseAccuse(b.dataset.s);break;
+    case 'reason':caseReason(+b.dataset.i);break;
+    // 益智
+    case 'undo':({soko:sokoUndo,hrd:hrdUndo,match:matchUndo,line:lineUndo})[nav.screen]();break;
+    case 'restart':({soko:sokoRestart,hrd:hrdRestart,line:lineRestart})[nav.screen]();break;
+  }
+});
+/* 推箱子：滑动 + 点格子；华容道：滑动 + 点木块 */
+var ptr=null;
+function bindSwipe(el,onSwipe,onTap){el.addEventListener('pointerdown',function(e){ptr={x:e.clientX,y:e.clientY,t:e.target};});
+  el.addEventListener('pointerup',function(e){if(!ptr)return;var dx=e.clientX-ptr.x,dy=e.clientY-ptr.y,t=ptr.t;ptr=null;
+    if(Math.max(Math.abs(dx),Math.abs(dy))>22){onSwipe(Math.abs(dx)>Math.abs(dy)?(dx>0?'R':'L'):(dy>0?'D':'U'),t);}else onTap(t,e);});
+  el.addEventListener('pointercancel',function(){ptr=null;});}
+bindSwipe($('#soko'),function(d){sokoDo(d);},function(t,e){var r=$('#soko').getBoundingClientRect(),cs=SP.cs,x=Math.floor((e.clientX-r.left)/cs),y=Math.floor((e.clientY-r.top)/cs);if(x<0||y<0||x>=SP.L.W||y>=SP.L.H)return;sokoTap(y*SP.L.W+x);});
+bindSwipe($('#hrd'),function(d,t){var pc=t.closest&&t.closest('.pc');var k=pc?+pc.dataset.k:HP.sel;if(k===null||k===undefined||isNaN(k))return;HP.sel=k;if(E.hrd.canMove(HP.ps,k,d))hrdMove(k,d);else{SFX.bad();renderHrd();}},
+  function(t){var ar=t.closest&&t.closest('.arr');if(ar){hrdMove(+ar.dataset.k,ar.dataset.dir);return;}var pc=t.closest&&t.closest('.pc');if(pc)hrdTapPiece(+pc.dataset.k);else{HP.sel=null;renderHrd();}});
+document.addEventListener('keydown',function(e){var m={ArrowUp:'U',ArrowDown:'D',ArrowLeft:'L',ArrowRight:'R',w:'U',s:'D',a:'L',d:'R'};
+  if(e.key==='Escape'){if(!sheetLocked)closeSheet();return;}
+  if($('#mask').classList.contains('show'))return;
+  if(nav.screen==='soko'&&m[e.key]){e.preventDefault();sokoDo(m[e.key]);}
+  if(nav.screen==='soko'&&(e.key==='z'||e.key==='Backspace')){e.preventDefault();sokoUndo();}
+  if(nav.screen==='hrd'&&m[e.key]&&HP.sel!==null){e.preventDefault();hrdMove(HP.sel,m[e.key]);}});
+var rsT=null;window.addEventListener('resize',function(){clearTimeout(rsT);rsT=setTimeout(function(){if(nav.screen==='soko'){buildSoko();renderSoko();}else if(nav.screen==='hrd')renderHrd();},120);});
+/* 测试 / 调试用 */
+window.PZ={E:E,store:function(){return store;},room:function(){return RP;},cas:function(){return CP;},soko:function(){return SP;},hrd:function(){return HP;},match:function(){return MP;},line:function(){return LP;},nav:nav,play:play};
+paintMute();renderHome();
+})();
+/*UI-END*/
+</script>
+</body>
+</html>
