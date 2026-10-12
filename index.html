@@ -58,6 +58,9 @@ h1,h2,h3,p{margin:0}
 .game.g3{background:linear-gradient(135deg,#2fd1a0,#24a5d6)}
 .game:after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.12)}
 .home-foot{margin-top:16px;text-align:center;color:var(--ink2);font-size:13px;line-height:1.6}
+.home-reset{margin-top:14px;display:flex;justify-content:center}
+.home-reset .btn{min-height:44px;padding:10px 16px;font-size:15px;border:2px dashed #e0c4d4;background:#fff7fb;color:#a14d72;box-shadow:none}
+.btn.coral{background:linear-gradient(180deg,#ff9a8b,#ff6b5a);color:#fff;box-shadow:0 5px 0 #d94a3a}
 @media(min-width:900px){.games{grid-template-columns:repeat(3,1fr)}.game{flex-direction:column;text-align:center;min-height:260px;justify-content:center}.game .gi{width:96px;height:96px;font-size:62px}}
 /* ---------- 关卡列表 ---------- */
 .list-intro{margin:12px 2px;color:var(--ink2);font-size:14px;line-height:1.5}
@@ -266,6 +269,7 @@ h1,h2,h3,p{margin:0}
     <button class="game g3" data-act="hub"><div class="gi">🧩</div><div><h2>关卡益智</h2><p>推箱子、华容道、移火柴、一笔画，一关比一关难！</p><span class="prog" id="prog-pz"></span></div></button>
   </div>
   <div class="home-foot">进度会自动保存在这台设备上 · 卡住了就点「💡 提示」</div>
+  <div class="home-reset"><button class="btn" data-act="resetProgress" type="button">🔄 给别人玩 · 清空通关</button></div>
 </div></section>
 <!-- 关卡列表 -->
 <section class="screen" id="scr-list">
@@ -5367,6 +5371,13 @@ function unlocked(k,i){if(QS.has('unlock')||i===0)return true;
 function sumStars(k){var s=0;for(var i=0;i<KINDS[k].n;i++)s+=bestOf(k,i);return s;}
 function doneCount(k){var s=0;for(var i=0;i<KINDS[k].n;i++)if(bestOf(k,i))s++;return s;}
 function record(k,i,stars){var key=k+':'+i;if(!store.best[key]||stars>store.best[key])store.best[key]=stars;save();}
+function resetAllProgress(){var sound=!!store.sound;store=defStore();store.sound=sound;save();}
+function resetRoomsProgress(){Object.keys(store.best).forEach(function(k){if(k.indexOf('room:')===0)delete store.best[k];});store.rooms={};save();}
+function openResetSheet(){var h=sheetHead('🔄 给别人玩 · 清空进度？');
+  h+='<p class="say">会清空<strong>密室逃脱、侦探推理、关卡益智</strong>的通关星星和半途进度，不能恢复。</p>';
+  h+='<div class="note">声音开关会保留。清空后，别人可以从第 1 关重新玩起。</div>';
+  h+='<div class="actions"><button class="btn coral" data-act="resetAllYes">确认清空</button><button class="btn ghost" data-act="resetRoomsYes">只重置密室逃脱</button><button class="btn ghost" data-act="close">再想想</button></div>';
+  openSheet(h);}
 /* ---------------- 页面切换 ---------------- */
 var nav={screen:'home',kind:null,idx:0};
 function show(id){$$('.screen').forEach(function(s){s.classList.toggle('active',s.id==='scr-'+id);});nav.screen=id;window.scrollTo(0,0);}
@@ -5708,6 +5719,9 @@ document.addEventListener('click',function(ev){var t=ev.target;
     case 'story':SFX.tap();storySheet();break;
     case 'roomReset':SFX.tap();openSheet(sheetHead('🔄 重新开始？')+'<p class="say">房间会回到一开始的样子，物品栏也会清空。</p><div class="actions"><button class="btn primary" data-act="roomResetYes">重新开始</button><button class="btn ghost" data-act="close">不了</button></div>');break;
     case 'roomResetYes':closeSheet(true);delete store.rooms[RP.room.id];save();startRoom(RP.i,true);break;
+    case 'resetProgress':SFX.tap();openResetSheet();break;
+    case 'resetAllYes':closeSheet(true);resetAllProgress();roomChapter=0;SFX.ok();toast('进度已清空，可以从头玩啦！');renderHome();break;
+    case 'resetRoomsYes':closeSheet(true);resetRoomsProgress();roomChapter=0;SFX.ok();toast('密室逃脱进度已清空');renderHome();break;
     // 侦探
     case 'tab':SFX.tap();setTab(b.dataset.tab);break;
     case 'clue':caseClue(b.dataset.id);break;
@@ -5738,7 +5752,7 @@ document.addEventListener('keydown',function(e){var m={ArrowUp:'U',ArrowDown:'D'
   if(nav.screen==='hrd'&&m[e.key]&&HP.sel!==null){e.preventDefault();hrdMove(HP.sel,m[e.key]);}});
 var rsT=null;window.addEventListener('resize',function(){clearTimeout(rsT);rsT=setTimeout(function(){if(nav.screen==='soko'){buildSoko();renderSoko();}else if(nav.screen==='hrd')renderHrd();},120);});
 /* 测试 / 调试用 */
-window.PZ={E:E,store:function(){return store;},room:function(){return RP;},cas:function(){return CP;},soko:function(){return SP;},hrd:function(){return HP;},match:function(){return MP;},line:function(){return LP;},nav:nav,play:play};
+window.PZ={E:E,store:function(){return store;},room:function(){return RP;},cas:function(){return CP;},soko:function(){return SP;},hrd:function(){return HP;},match:function(){return MP;},line:function(){return LP;},nav:nav,play:play,unlocked:unlocked,bestOf:bestOf,resetAllProgress:resetAllProgress,resetRoomsProgress:resetRoomsProgress,renderHome:renderHome};
 paintMute();renderHome();
 })();
 /*UI-END*/
